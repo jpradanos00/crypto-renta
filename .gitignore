@@ -1,2 +1,12 @@
-!*.csv
-node_modules
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+dist/
+
+# Env
+.env*.local
+
+# CSVs
+*.csv
