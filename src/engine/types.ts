@@ -118,9 +118,11 @@ export interface IncomeEvent {
 export type WarningCode =
   | "INSUFFICIENT_LOTS"
   | "SEND_AS_TRANSFER"
+  | "SEND_TO_THIRD_PARTY"
   | "UNKNOWN_TRANSACTION_TYPE"
   | "CONVERT_PARSE_FAILED"
-  | "NEGATIVE_COST_BASIS";
+  | "NEGATIVE_COST_BASIS"
+  | "RECEIVE_UNMATCHED";
 
 export interface CalculationWarning {
   transactionId: string;

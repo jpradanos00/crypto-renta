@@ -8,6 +8,8 @@ import type {
   LotConsumption,
 } from "@/engine/types";
 import { classifyTransaction } from "@/engine/fiscal/classifier";
+import { TransferLedger } from "@/engine/transfer/ledger";
+import type { TransferLot } from "@/engine/transfer/types";
 
 function generateId(): string {
   return Math.random().toString(36).substring(2, 9);
@@ -36,6 +38,7 @@ export class FIFOEngine {
     string,
     { asset: string; quantity: Decimal }
   > = new Map();
+  private transferLedger = new TransferLedger();
 
   processTransaction(tx: SanitizedTransaction): void {
     switch (tx.type) {
@@ -121,6 +124,60 @@ export class FIFOEngine {
 
   private handleReceive(tx: SanitizedTransaction): void {
     if (tx.quantity.lte(0)) return;
+
+    const classification = classifyTransaction(tx);
+    const isIncome = classification.cubo !== null;
+
+    if (isIncome) {
+      // Income (Coinbase Earn, staking aggregate, airdrop):
+      // el coste de adquisición es el valor de mercado en recepción
+      const costPerUnit = tx.subtotal.dividedBy(tx.quantity);
+      this.addLot({
+        id: generateId(),
+        asset: tx.asset,
+        remainingQuantity: tx.quantity,
+        originalQuantity: tx.quantity,
+        costPerUnit,
+        acquiredAt: tx.timestamp,
+        source: "Receive",
+      });
+
+      this.incomes.push({
+        transactionId: tx.id,
+        timestamp: tx.timestamp,
+        asset: tx.asset,
+        quantity: tx.quantity,
+        fairMarketValueEUR: tx.subtotal,
+        cubo: classification.cubo,
+        category: classification.category,
+      });
+      return;
+    }
+
+    // Non-income receive: try TransferLedger first
+    const match = this.transferLedger.findMatch({
+      asset: tx.asset,
+      quantity: tx.quantity,
+      timestamp: tx.timestamp,
+      senderAddress: tx.senderAddress,
+    });
+
+    if (match) {
+      for (const lot of match.lots) {
+        this.addLot({
+          id: generateId(),
+          asset: tx.asset,
+          remainingQuantity: lot.quantityUsed,
+          originalQuantity: lot.quantityUsed,
+          costPerUnit: lot.costPerUnit,
+          acquiredAt: lot.acquiredAt,
+          source: "Receive",
+        });
+      }
+      return;
+    }
+
+    // No match found: usar precio de mercado con warning
     const costPerUnit = tx.subtotal.dividedBy(tx.quantity);
     this.addLot({
       id: generateId(),
@@ -132,18 +189,12 @@ export class FIFOEngine {
       source: "Receive",
     });
 
-    const classification = classifyTransaction(tx);
-    if (classification.cubo && classification.category) {
-      this.incomes.push({
-        transactionId: tx.id,
-        timestamp: tx.timestamp,
-        asset: tx.asset,
-        quantity: tx.quantity,
-        fairMarketValueEUR: tx.subtotal,
-        cubo: classification.cubo,
-        category: classification.category,
-      });
-    }
+    this.warnings.push({
+      transactionId: tx.id,
+      code: "RECEIVE_UNMATCHED",
+      message:
+        "Recepción externa sin transferencia correlada. El coste de adquisición usa el precio de mercado de Coinbase. Si esta recepción proviene de otro exchange, sube también su CSV.",
+    });
   }
 
   private handleIncome(tx: SanitizedTransaction): void {
@@ -199,7 +250,28 @@ export class FIFOEngine {
 
   private handleSend(tx: SanitizedTransaction): void {
     if (tx.quantity.lte(0)) return;
-    this.consumeLots(tx.asset, tx.quantity, tx.id);
+    const { consumed, consumedDetails, costBasisTotal } = this.consumeLotsDetailed(
+      tx.asset,
+      tx.quantity,
+      tx.id
+    );
+    void costBasisTotal;
+
+    const transferLots: TransferLot[] = consumedDetails.map((d) => ({
+      costPerUnit: d.costPerUnit,
+      quantityUsed: d.quantityUsed,
+      acquiredAt: d.acquiredAt,
+    }));
+
+    this.transferLedger.save(
+      tx.asset,
+      tx.quantity,
+      tx.timestamp,
+      tx.source,
+      tx.recipientAddress,
+      transferLots
+    );
+
     this.warnings.push({
       transactionId: tx.id,
       code: "SEND_AS_TRANSFER",

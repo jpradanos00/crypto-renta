@@ -7,9 +7,13 @@ const WARNING_CODE_MAP: Record<string, string> = {
     "Faltan lotes (probablemente por redondeo del exchange). Revisa que hayas subido todo el historial.",
   SEND_AS_TRANSFER:
     "Transferencia entre wallets no sujeta a impuestos.",
+  SEND_TO_THIRD_PARTY:
+    "Envío a tercero marcado como transmisión. Genera ganancia/pérdida patrimonial.",
   UNKNOWN_TRANSACTION_TYPE: "Tipo de transacción no reconocido.",
   CONVERT_PARSE_FAILED: "No se pudo interpretar el destino de un Convert.",
   NEGATIVE_COST_BASIS: "Coste de adquisición negativo detectado.",
+  RECEIVE_UNMATCHED:
+    "Recepción externa sin transferencia de origen correlada. El coste de adquisición usa el precio de mercado del exchange receptor. Si este activo viene de otro exchange, sube también su CSV.",
 };
 
 export function WarningPanel() {

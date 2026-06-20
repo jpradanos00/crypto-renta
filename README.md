@@ -144,12 +144,32 @@ Coinbase: Sell    0.5 ETH                 (ganancia calculada con coste real ✓
 
 ---
 
+## Exchanges soportados
+
+| Exchange | Estado |
+|----------|--------|
+| **Coinbase** | ✅ Completo |
+| Binance | 🔜 En desarrollo |
+| Kraken | 🔜 En desarrollo |
+
+Actualmente la app solo procesa CSVs de Coinbase. La arquitectura está diseñada para que añadir un nuevo exchange sea cuestión de escribir un parser que mapee su formato de columnas a `SanitizedTransaction`.
+
+### ¿Quieres añadir tu exchange?
+
+1. Crea un archivo en `src/engine/parser/tu-exchange.ts` que exporte una función `parse(tuExchange)CSV(csvText: string): CoinbaseRawRow[]`
+2. Añade la lógica de mapeo de columnas específicas de tu exchange
+3. Si el CSV de tu exchange incluye direcciones de wallet (`sender`/`recipient`), rellena esos campos en el raw row — así la correlación cross‑exchange funcionará con el Nivel 1 (determinista)
+4. Añade tests en `tests/engine/` y manda un PR
+
+Consulta [`PLAN.md`](PLAN.md) para ver el roadmap completo de mejoras.
+
+---
+
 ## Lo que NO hace (todavía)
 
 - ❌ No calcula la cuota tributaria (tipos progresivos 19–28 %). La app te da los importes; tú aplicas los tipos que correspondan.
 - ❌ No aplica la exención de €1,000 para pequeñas ganancias.
 - ❌ No genera el borrador de Renta Web — solo el desglose por moneda.
-- ❌ Solo funciona con CSVs de Coinbase. Soporte para Binance y Kraken en desarrollo.
 
 ---
 
