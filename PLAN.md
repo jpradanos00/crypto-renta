@@ -11,9 +11,9 @@ Plan de mejoras derivado de la auditoría fiscal y técnica (2026-06-20). Actual
 | B0 | **ALTO** | `src/engine/fifo/engine.ts:400` | `lt(1e-8)` → `lte(1e-8)` para tolerar redondeos exactos de 1e-8 | ✅ Fase 1 |
 | F1 | **CRÍTICO** | `src/engine/fifo/engine.ts:274` | Cost basis del asset destino en `Convert` usa importe neto (totalInclFees) en vez del bruto (subtotal). Art. 35.2 LIRPF. | ✅ Fase 1 |
 | F2 | **CRÍTICO** | Arquitectura | Pérdida de cost basis original en transfers cross-exchange: Send consume lot con coste real → Receive crea nuevo lot con precio de mercado falso del exchange receptor. | 🟡 Fase 2 (TransferLedger ✓, UI pendiente) |
-| F3 | **ALTO** | `src/engine/fiscal/classifier.ts:19-31` | String-matching frágil para clasificar Receives (`sender.includes(...)`). | ⬜ Pendiente |
-| F4 | **MEDIO** | `src/engine/fifo/engine.ts:287` | Clave de emparejamiento de Asset Migration (`timestamp + quantity`) no incluye el activo. | ⬜ Pendiente |
-| F5 | **MEDIO** | `src/engine/worker/pipeline.ts:41` | Ordenación cronológica no determinista para timestamps idénticos (sin criterio de desempate). | ⬜ Pendiente |
+| F3 | **ALTO** | `src/engine/fiscal/classifier.ts` | String-matching frágil para clasificar Receives (`sender.includes(...)`). | ✅ Fase 3 |
+| F4 | **MEDIO** | `src/engine/fifo/engine.ts:287` | Clave de emparejamiento de Asset Migration (`timestamp + quantity`) no incluye el activo, riesgo teórico de colisión. | ⬜ No aplicable — la migración cambia el activo, no se puede incluir en clave |
+| F5 | **MEDIO** | `src/engine/worker/pipeline.ts:41` | Ordenación cronológica no determinista para timestamps idénticos (sin criterio de desempate). | ✅ Fase 3 |
 | F6 | **BAJO** | `src/engine/fifo/engine.ts` | Retail Simple Price Improvement genera income events de céntimos (€0.02). | ⬜ Pendiente |
 | F7 | **BAJO** | `src/engine/parser/sanitizer.ts:90` | El campo `source` está hardcodeado a `"coinbase"`. | ⬜ Pendiente |
 
@@ -48,19 +48,19 @@ Plan de mejoras derivado de la auditoría fiscal y técnica (2026-06-20). Actual
 - **Nuevo warning:** `SEND_TO_THIRD_PARTY` — para futuro soporte de Send a tercero (UI)
 - **Pendiente:** UI — checkbox en `operations-table` para que el usuario marque Sends como "Wallet propia" (por defecto) o "Pago a tercero"
 
-### ⬜ Fase 3: Robustez (pendiente)
+### ✅ Fase 3: Robustez (completada — 2026-06-20)
 
 #### F3 — Robustecer clasificador de Receives
 - **Archivo:** `src/engine/fiscal/classifier.ts`
-- **Cambio:** Sustituir `sender.includes(...)` por una tabla de patrones con regex.
-
-#### F4 — Mejorar clave de Asset Migration
-- **Archivo:** `src/engine/fifo/engine.ts:287`
-- **Cambio:** Añadir `tx.asset` a la clave: `` `${tx.timestamp.toISOString()}_${tx.asset}_${tx.quantity.toString()}` ``
+- **Cambio:** Sustituido `sender.includes(...)` por tabla `RECEIVE_RULES` con `RegExp` anclados (`^...$`).
+- **Ventaja:** Si Coinbase cambia el formato, solo hay que añadir/modificar un patrón. Sin riesgo de falsos positivos.
 
 #### F5 — Añadir desempate en ordenación
 - **Archivo:** `src/engine/worker/pipeline.ts:41`
-- **Cambio:** Añadir `|| a.id.localeCompare(b.id)` como criterio de desempate.
+- **Cambio:** `|| a.id.localeCompare(b.id)` como criterio de desempate tras timestamp.
+
+#### F4 — Descartado
+- La migración de activos cambia el token (MATIC → POL, BTC → BCH). No se puede usar el asset como parte de la clave de emparejamiento porque difiere entre OUT e IN. El riesgo de colisión con timestamp + cantidad es ínfimo en la práctica.
 
 ### ⬜ Fase 4: Mejoras menores (pendiente)
 

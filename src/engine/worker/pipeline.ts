@@ -38,7 +38,7 @@ export async function runPipeline(
   });
 
   // Ordenar por fecha ascendente (FIFO necesita orden cronológico)
-  transactions.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+  transactions.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime() || a.id.localeCompare(b.id));
 
   onProgress({
     phase: "computing_fifo",
