@@ -253,6 +253,28 @@ describe("FIFOEngine", () => {
       expect(ltcLots[0].costPerUnit.toString()).toBe("30"); // 120 / 4
     });
 
+    it("usa subtotal (bruto) no totalInclFees (neto) para el cost basis del target", () => {
+      const engine = new FIFOEngine();
+      engine.processTransaction(makeTx({ id: "b1", type: "Buy", quantity: d("1"), subtotal: d("100"), totalInclFees: d("100") }));
+      engine.processTransaction(
+        makeTx({
+          id: "c1",
+          type: "Convert",
+          asset: "BTC",
+          quantity: d("1"),
+          subtotal: d("150"),       // valor bruto de mercado
+          totalInclFees: d("145"),  // neto tras fees (150 - 5)
+          direction: "OUT",
+          notes: "Converted 1 BTC to 10 ETH",
+        })
+      );
+
+      const snapshot = engine.getPortfolioSnapshot();
+      const ethLots = snapshot.get("ETH")!;
+      // Art. 35.2 LIRPF: coste de adquisición = valor bruto, no neto
+      expect(ethLots[0].costPerUnit.toString()).toBe("15"); // 150 / 10, no 145/10 = 14.5
+    });
+
     it("falls back to totalInclFees and emits warning when parse fails", () => {
       const engine = new FIFOEngine();
       engine.processTransaction(makeTx({ id: "b1", type: "Buy", quantity: d("1"), subtotal: d("100"), totalInclFees: d("100") }));

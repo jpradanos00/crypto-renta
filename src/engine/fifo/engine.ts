@@ -270,8 +270,8 @@ export class FIFOEngine {
       type: "Convert",
     });
 
-    // Lado COMPRA: el nuevo cost basis es el valor de transmisión neto
-    const costPerUnit = proceeds.dividedBy(targetQuantity);
+    // Lado COMPRA: coste de adquisición = valor bruto de lo entregado (Art. 35.2 LIRPF)
+    const costPerUnit = tx.subtotal.dividedBy(targetQuantity);
     this.addLot({
       id: generateId(),
       asset: targetAsset,
@@ -397,7 +397,7 @@ export class FIFOEngine {
 
     if (remaining.gt(0)) {
       // Tolerancia para errores de redondeo del exchange (< 1e-8)
-      if (remaining.lt(1e-8)) {
+      if (remaining.lte(1e-8)) {
         // Ignorar diferencia insignificante, no generar warning
         remaining = new Decimal("0");
       } else {

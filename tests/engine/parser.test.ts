@@ -82,9 +82,8 @@ ID,Timestamp,Transaction Type,Asset,Quantity Transacted,Price Currency,Price at 
       );
       const rows = parseCoinbaseCSV(csvText);
 
-      // El CSV real tiene 1367 líneas total, pero 4 son metadatos + header
-      // => ~1363 filas de datos
-      expect(rows.length).toBeGreaterThan(1300);
+      // El CSV fixture tiene 25 filas de datos (más 3 líneas de metadatos + 1 header)
+      expect(rows.length).toBe(25);
 
       // Verificar que cada fila tiene los campos obligatorios
       for (const row of rows) {

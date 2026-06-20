@@ -10,3 +10,4 @@ dist/
 
 # CSVs
 *.csv
+!fixtures/sample-coinbase.csv
