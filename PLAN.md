@@ -14,8 +14,8 @@ Plan de mejoras derivado de la auditoría fiscal y técnica (2026-06-20). Actual
 | F3 | **ALTO** | `src/engine/fiscal/classifier.ts` | String-matching frágil para clasificar Receives (`sender.includes(...)`). | ✅ Fase 3 |
 | F4 | **MEDIO** | `src/engine/fifo/engine.ts:287` | Clave de emparejamiento de Asset Migration (`timestamp + quantity`) no incluye el activo, riesgo teórico de colisión. | ⬜ No aplicable — la migración cambia el activo, no se puede incluir en clave |
 | F5 | **MEDIO** | `src/engine/worker/pipeline.ts:41` | Ordenación cronológica no determinista para timestamps idénticos (sin criterio de desempate). | ✅ Fase 3 |
-| F6 | **BAJO** | `src/engine/fifo/engine.ts` | Retail Simple Price Improvement genera income events de céntimos (€0.02). | ⬜ Pendiente |
-| F7 | **BAJO** | `src/engine/parser/sanitizer.ts:90` | El campo `source` está hardcodeado a `"coinbase"`. | ⬜ Pendiente |
+| F6 | **BAJO** | `src/engine/fifo/engine.ts` | Retail Simple Price Improvement genera income events de céntimos (€0.02). | ✅ Fase 4 |
+| F7 | **BAJO** | `src/engine/parser/sanitizer.ts:90` | El campo `source` está hardcodeado a `"coinbase"`. | ✅ Fase 4 |
 
 ---
 
@@ -62,15 +62,15 @@ Plan de mejoras derivado de la auditoría fiscal y técnica (2026-06-20). Actual
 #### F4 — Descartado
 - La migración de activos cambia el token (MATIC → POL, BTC → BCH). No se puede usar el asset como parte de la clave de emparejamiento porque difiere entre OUT e IN. El riesgo de colisión con timestamp + cantidad es ínfimo en la práctica.
 
-### ⬜ Fase 4: Mejoras menores (pendiente)
+### ✅ Fase 4: Mejoras menores (completada — 2026-06-20)
 
 #### F6 — Umbral mínimo para income events
 - **Archivo:** `src/engine/fifo/engine.ts` (`handleIncome`)
-- **Cambio:** No generar `IncomeEvent` si `fairMarketValueEUR < 0.01` (configurable).
+- **Cambio:** No genera `IncomeEvent` si `fairMarketValueEUR < €0.01`. El lote se crea igualmente (el activo se adquirió).
 
 #### F7 — Parametrizar source
-- **Archivo:** `src/engine/parser/sanitizer.ts:90`
-- **Cambio:** Aceptar parámetro `source` en lugar de hardcodear `"coinbase"`.
+- **Archivo:** `src/engine/parser/sanitizer.ts:25`
+- **Cambio:** `sanitizeTransactions(rawRows, source = "coinbase")` — acepta parámetro `source` con default `"coinbase"`.
 
 ---
 

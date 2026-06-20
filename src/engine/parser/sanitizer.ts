@@ -23,7 +23,8 @@ const VALID_TRANSACTION_TYPES = new Set<string>([
 ]);
 
 export function sanitizeTransactions(
-  rawRows: CoinbaseRawRow[]
+  rawRows: CoinbaseRawRow[],
+  source = "coinbase"
 ): SanitizedTransaction[] {
   const sanitized: SanitizedTransaction[] = [];
 
@@ -87,7 +88,7 @@ export function sanitizeTransactions(
       recipientAddress,
       convertTargetAsset,
       convertTargetQuantity,
-      source: "coinbase",
+      source,
     });
   }
 

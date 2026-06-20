@@ -212,12 +212,14 @@ export class FIFOEngine {
 
     const classification = classifyTransaction(tx);
     if (classification.cubo && classification.category) {
+      const fairMV = tx.priceAtTransaction.times(tx.quantity);
+      if (fairMV.lt(0.01)) return;
       this.incomes.push({
         transactionId: tx.id,
         timestamp: tx.timestamp,
         asset: tx.asset,
         quantity: tx.quantity,
-        fairMarketValueEUR: tx.priceAtTransaction.times(tx.quantity),
+        fairMarketValueEUR: fairMV,
         cubo: classification.cubo,
         category: classification.category,
       });
