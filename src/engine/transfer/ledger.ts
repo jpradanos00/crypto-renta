@@ -70,7 +70,7 @@ export class TransferLedger {
     for (const candidate of candidates) {
       if (candidate.quantity.gte(query.quantity)) {
         const ratio = query.quantity.dividedBy(candidate.quantity);
-        if (ratio.gte(d(1 - QUANTITY_TOLERANCE))) {
+        if (ratio.gte(d(String(1 - QUANTITY_TOLERANCE)))) {
           this.removePending(candidate.id);
           return candidate;
         }

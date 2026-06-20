@@ -11,6 +11,8 @@ const PAGE_SIZE = 50;
 export function OperationsTable() {
   const report = useAppStore((s) => s.report);
   const status = useAppStore((s) => s.status);
+  const sendDecisions = useAppStore((s) => s.sendDecisions);
+  const toggleSendDecision = useAppStore((s) => s.toggleSendDecision);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [sortAsc, setSortAsc] = useState(false);
@@ -182,6 +184,7 @@ export function OperationsTable() {
                   <th scope="col" className="px-4 py-3 text-right">Valor EUR</th>
                   <th scope="col" className="px-4 py-3 text-right">Gan/Pérd</th>
                   <th scope="col" className="px-4 py-3 text-center">Box</th>
+                  <th scope="col" className="px-4 py-3 text-center">Envío</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -197,6 +200,28 @@ export function OperationsTable() {
                       {gainLossForTx(tx)}
                     </td>
                     <td className="px-4 py-3 text-center">{getCuboForTx(tx)}</td>
+                    <td className="px-4 py-3 text-center">
+                      {tx.type === "Send" ? (
+                        <button
+                          type="button"
+                          onClick={() => toggleSendDecision(tx.id)}
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                            sendDecisions.get(tx.id) === "third-party"
+                              ? "bg-orange-500/20 text-orange-300 hover:bg-orange-500/30"
+                              : "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"
+                          }`}
+                          title={
+                            sendDecisions.get(tx.id) === "third-party"
+                              ? "Marcado como pago a tercero — clic para cambiar"
+                              : "Wallet propia — clic si es pago a tercero"
+                          }
+                        >
+                          {sendDecisions.get(tx.id) === "third-party"
+                            ? "Tercero"
+                            : "Propia"}
+                        </button>
+                      ) : null}
+                    </td>
                   </tr>
                 ))}
               </tbody>

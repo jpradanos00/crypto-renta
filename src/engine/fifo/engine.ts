@@ -142,15 +142,19 @@ export class FIFOEngine {
         source: "Receive",
       });
 
-      this.incomes.push({
-        transactionId: tx.id,
-        timestamp: tx.timestamp,
-        asset: tx.asset,
-        quantity: tx.quantity,
-        fairMarketValueEUR: tx.subtotal,
-        cubo: classification.cubo,
-        category: classification.category,
-      });
+      const cubo = classification.cubo;
+      const category = classification.category;
+      if (cubo && category) {
+        this.incomes.push({
+          transactionId: tx.id,
+          timestamp: tx.timestamp,
+          asset: tx.asset,
+          quantity: tx.quantity,
+          fairMarketValueEUR: tx.subtotal,
+          cubo,
+          category,
+        });
+      }
       return;
     }
 
@@ -252,12 +256,13 @@ export class FIFOEngine {
 
   private handleSend(tx: SanitizedTransaction): void {
     if (tx.quantity.lte(0)) return;
-    const { consumed, consumedDetails, costBasisTotal } = this.consumeLotsDetailed(
+    const { consumed: _consumed, consumedDetails, costBasisTotal: _cost } = this.consumeLotsDetailed(
       tx.asset,
       tx.quantity,
       tx.id
     );
-    void costBasisTotal;
+    void _consumed;
+    void _cost;
 
     const transferLots: TransferLot[] = consumedDetails.map((d) => ({
       costPerUnit: d.costPerUnit,

@@ -23,6 +23,7 @@ interface AppState {
   availableYears: number[];
   fullHistory: FullHistory | null;
   errors: AppError[];
+  sendDecisions: Map<string, "own" | "third-party">;
 
   // Actions
   addCsvFile: (file: CsvFileEntry) => void;
@@ -36,6 +37,7 @@ interface AppState {
   setFullHistory: (history: FullHistory | null) => void;
   addError: (error: AppError) => void;
   clearErrors: () => void;
+  toggleSendDecision: (txId: string) => void;
   reset: () => void;
 }
 
@@ -50,6 +52,7 @@ export const useAppStore = create<AppState>((set) => ({
   availableYears: [],
   fullHistory: null,
   errors: [],
+  sendDecisions: new Map(),
 
   addCsvFile: (file) =>
     set((state) => ({ csvFiles: [...state.csvFiles, file] })),
@@ -78,6 +81,17 @@ export const useAppStore = create<AppState>((set) => ({
 
   clearErrors: () => set({ errors: [] }),
 
+  toggleSendDecision: (txId) =>
+    set((state) => {
+      const next = new Map(state.sendDecisions);
+      if (next.get(txId) === "third-party") {
+        next.delete(txId);
+      } else {
+        next.set(txId, "third-party");
+      }
+      return { sendDecisions: next };
+    }),
+
   reset: () =>
     set({
       csvFiles: [],
@@ -89,5 +103,6 @@ export const useAppStore = create<AppState>((set) => ({
       availableYears: [],
       fullHistory: null,
       errors: [],
+      sendDecisions: new Map(),
     }),
 }));
