@@ -137,6 +137,8 @@ export interface AssetBreakdown {
   acquisitionValueEUR: Decimal;
   profitOrLossEUR: Decimal;
   transactionsCount: number;
+  hasSell: boolean;
+  hasConvert: boolean;
 }
 
 // ── Fiscal Year Report ──

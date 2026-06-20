@@ -49,6 +49,9 @@ export function AssetBreakdownTable({
         <p className="text-xs text-muted-foreground leading-relaxed">
           Copia estos valores exactos añadiendo un nuevo elemento por cada moneda
           en el apartado de <strong>Monedas Virtuales</strong> de Renta Web.
+          Si una moneda tiene tanto ventas a EUR como swaps a crypto,
+          necesitarás <strong>dos entradas separadas</strong> con distinto tipo
+          de contraprestación.
         </p>
       </div>
 
@@ -66,6 +69,7 @@ export function AssetBreakdownTable({
               </th>
               <th className="pb-2 px-4 font-medium text-right">Ganancia / Pérdida</th>
               <th className="pb-2 pl-4 font-medium text-right" title="Número de ventas y swaps de este activo">Nº ops.</th>
+              <th className="pb-2 pl-4 font-medium text-center" title="Tipo de contraprestación recibida a cambio. Indícalo en Renta Web.">Contraprest.</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -96,6 +100,15 @@ export function AssetBreakdownTable({
                   <td className="py-3 pl-4 text-right text-xs text-muted-foreground font-mono-nums">
                     {item.transactionsCount}
                   </td>
+                  <td className="py-3 pl-4 text-center text-xs font-mono-nums">
+                    {item.hasSell && item.hasConvert ? (
+                      <span className="text-warning" title="Requiere dos entradas en Renta Web: una para EUR y otra para crypto">EUR + Crypto</span>
+                    ) : item.hasSell ? (
+                      <span className="text-gain" title="Moneda de curso legal (EUR)">EUR</span>
+                    ) : (
+                      <span className="text-indigo-400" title="Virtual (otra criptomoneda)">Crypto</span>
+                    )}
+                  </td>
                 </tr>
               );
             })}
@@ -122,6 +135,7 @@ export function AssetBreakdownTable({
               <td className="py-3 pl-4 text-right text-xs text-muted-foreground font-mono-nums">
                 {disposals.length}
               </td>
+              <td className="py-3 pl-4" />
             </tr>
           </tbody>
         </table>

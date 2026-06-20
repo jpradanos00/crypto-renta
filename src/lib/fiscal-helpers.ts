@@ -14,6 +14,8 @@ export function groupDisposalsByAsset(disposals: DisposalEvent[]): AssetBreakdow
       acquisitionValueEUR: Decimal;
       profitOrLossEUR: Decimal;
       transactionsCount: number;
+      hasSell: boolean;
+      hasConvert: boolean;
     }
   >();
 
@@ -23,6 +25,8 @@ export function groupDisposalsByAsset(disposals: DisposalEvent[]): AssetBreakdow
       acquisitionValueEUR: ZERO,
       profitOrLossEUR: ZERO,
       transactionsCount: 0,
+      hasSell: false,
+      hasConvert: false,
     };
 
     map.set(d.asset, {
@@ -30,6 +34,8 @@ export function groupDisposalsByAsset(disposals: DisposalEvent[]): AssetBreakdow
       acquisitionValueEUR: existing.acquisitionValueEUR.plus(d.costBasisEUR),
       profitOrLossEUR: existing.profitOrLossEUR.plus(d.gainLossEUR),
       transactionsCount: existing.transactionsCount + 1,
+      hasSell: existing.hasSell || d.type === "Sell",
+      hasConvert: existing.hasConvert || d.type === "Convert",
     });
   }
 
@@ -40,6 +46,8 @@ export function groupDisposalsByAsset(disposals: DisposalEvent[]): AssetBreakdow
       acquisitionValueEUR: vals.acquisitionValueEUR,
       profitOrLossEUR: vals.profitOrLossEUR,
       transactionsCount: vals.transactionsCount,
+      hasSell: vals.hasSell,
+      hasConvert: vals.hasConvert,
     })
   );
 

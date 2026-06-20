@@ -34,35 +34,32 @@ export function CsvDropzone() {
   const addCsvFile = useAppStore((s) => s.addCsvFile);
   const removeCsvFile = useAppStore((s) => s.removeCsvFile);
 
-  const getFileSignature = (file: File): string =>
-    `${file.name}|${file.size}|${file.lastModified}`;
+  const getFileSignature = (name: string, size: number): string =>
+    `${name}|${size}`;
 
   const handleFiles = useCallback(
     (files: FileList | null) => {
       if (!files) return;
-      const csvFiles = Array.from(files).filter((f) =>
+      const droppedFiles = Array.from(files).filter((f) =>
         f.name.toLowerCase().endsWith(".csv")
       );
-      if (!csvFiles.length) return;
+      if (!droppedFiles.length) return;
 
-      const existingSigs = new Set(csvFiles.map((f) => getFileSignature(f)));
-      let hasDuplicate = false;
-      let lastDupName = "";
+      // Comprobar duplicados contra los archivos YA en el store
+      const existingSigs = new Set(
+        csvFiles.map((f) => getFileSignature(f.name, f.size))
+      );
 
-      for (const file of csvFiles) {
-        const sig = getFileSignature(file);
+      for (const file of droppedFiles) {
+        const sig = getFileSignature(file.name, file.size);
         if (existingSigs.has(sig)) {
-          hasDuplicate = true;
-          lastDupName = file.name;
+          setDuplicateWarning(`"${file.name}" ya ha sido añadido.`);
+          setTimeout(() => setDuplicateWarning(null), 3000);
+          return;
         }
       }
 
-      if (hasDuplicate) {
-        setDuplicateWarning(`"${lastDupName}" ya ha sido añadido.`);
-        setTimeout(() => setDuplicateWarning(null), 3000);
-      }
-
-      csvFiles.forEach((file) => {
+      for (const file of droppedFiles) {
         const reader = new FileReader();
         reader.onload = () => {
           const entry: CsvFileEntry = {
@@ -74,9 +71,9 @@ export function CsvDropzone() {
           addCsvFile(entry);
         };
         reader.readAsText(file);
-      });
+      }
     },
-    [addCsvFile]
+    [csvFiles, addCsvFile]
   );
 
   const onDragOver = useCallback((e: React.DragEvent) => {
