@@ -120,6 +120,24 @@ describe("FIFOEngine", () => {
       const warnings = engine.getWarnings();
       expect(warnings.some((w) => w.code === "SEND_AS_TRANSFER")).toBe(true);
     });
+
+    it("genera DisposalEvent cuando se marca como tercero (third-party)", () => {
+      const decisions = new Map<string, "own" | "third-party">();
+      decisions.set("send1", "third-party");
+
+      const engine = new FIFOEngine(decisions);
+      engine.processTransaction(makeTx({ id: "b1", type: "Buy", quantity: d("1"), subtotal: d("100"), totalInclFees: d("100") }));
+      engine.processTransaction(makeTx({ id: "send1", type: "Send", quantity: d("1"), subtotal: d("150"), totalInclFees: d("150"), direction: "OUT" }));
+
+      const disposals = engine.getDisposals();
+      expect(disposals).toHaveLength(1);
+      expect(disposals[0].type).toBe("Sell");
+      expect(disposals[0].gainLossEUR.toString()).toBe("50"); // 150 - 100 = 50
+      expect(disposals[0].proceedsEUR.toString()).toBe("150");
+
+      const warnings = engine.getWarnings();
+      expect(warnings.some((w) => w.code === "SEND_TO_THIRD_PARTY")).toBe(true);
+    });
   });
 
   describe("Receive", () => {

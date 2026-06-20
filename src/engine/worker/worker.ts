@@ -1,10 +1,11 @@
 import * as Comlink from "comlink";
-import { runPipeline } from "@/engine/worker/pipeline";
+import { prepareTransactions, runPipeline } from "@/engine/worker/pipeline";
 import type { CryptoRentaWorker } from "@/engine/worker/types";
 
 const workerAPI: CryptoRentaWorker = {
-  async processCSVs(csvTexts, onProgress) {
-    return runPipeline(csvTexts, onProgress);
+  async processCSVs(csvTexts, sendDecisions, onProgress) {
+    const transactions = prepareTransactions(csvTexts);
+    return runPipeline(transactions, sendDecisions, onProgress);
   },
 };
 

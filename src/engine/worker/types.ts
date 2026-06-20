@@ -21,6 +21,7 @@ export interface WorkerResult {
 export interface CryptoRentaWorker {
   processCSVs(
     csvTexts: string[],
+    sendDecisions: Map<string, "own" | "third-party">,
     onProgress: (progress: WorkerProgress) => void
   ): Promise<WorkerResult>;
 }

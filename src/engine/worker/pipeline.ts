@@ -2,28 +2,25 @@ import { parseCoinbaseCSV } from "@/engine/parser/coinbase";
 import { sanitizeTransactions } from "@/engine/parser/sanitizer";
 import { FIFOEngine } from "@/engine/fifo/engine";
 import { buildFiscalYearReports } from "@/engine/fiscal/reporter";
-import type { CoinbaseRawRow } from "@/engine/types";
+import type { CoinbaseRawRow, SanitizedTransaction } from "@/engine/types";
 import type { WorkerProgress, WorkerResult } from "@/engine/worker/types";
 
-export async function runPipeline(
-  csvTexts: string[],
-  onProgress: (progress: WorkerProgress) => void
-): Promise<WorkerResult> {
-  onProgress({ phase: "parsing", percent: 0, message: "Parseando CSVs..." });
+/**
+ * Paso rápido: parsea, sanitiza, deduplica y ordena las transacciones.
+ * Se usa antes de la pantalla de revisión para que el usuario pueda
+ * clasificar envíos antes de lanzar el FIFO.
+ */
+export function prepareTransactions(
+  csvTexts: string[]
+): SanitizedTransaction[] {
   const allRawRows: CoinbaseRawRow[] = [];
   for (const text of csvTexts) {
     const rows = parseCoinbaseCSV(text);
     allRawRows.push(...rows);
   }
 
-  onProgress({
-    phase: "sanitizing",
-    percent: 20,
-    message: "Sanitizando transacciones...",
-  });
   let transactions = sanitizeTransactions(allRawRows);
 
-  // Deduplicate by transaction ID
   const seen = new Set<string>();
   transactions = transactions.filter((tx) => {
     if (seen.has(tx.id)) return false;
@@ -31,22 +28,32 @@ export async function runPipeline(
     return true;
   });
 
-  onProgress({
-    phase: "building_lots",
-    percent: 40,
-    message: "Ordenando cronológicamente...",
-  });
+  transactions.sort(
+    (a, b) =>
+      a.timestamp.getTime() - b.timestamp.getTime() ||
+      a.id.localeCompare(b.id)
+  );
 
-  // Ordenar por fecha ascendente (FIFO necesita orden cronológico)
-  transactions.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime() || a.id.localeCompare(b.id));
+  return transactions;
+}
 
+/**
+ * Pipeline fiscal completo: FIFO + clasificación + reporte.
+ * Recibe transacciones ya sanitizadas y las decisiones del usuario
+ * sobre qué envíos son a terceros.
+ */
+export async function runPipeline(
+  transactions: SanitizedTransaction[],
+  sendDecisions: Map<string, "own" | "third-party">,
+  onProgress: (progress: WorkerProgress) => void
+): Promise<WorkerResult> {
   onProgress({
     phase: "computing_fifo",
-    percent: 50,
+    percent: 40,
     message: "Calculando FIFO...",
   });
 
-  const engine = new FIFOEngine();
+  const engine = new FIFOEngine(sendDecisions);
   for (const tx of transactions) {
     engine.processTransaction(tx);
   }

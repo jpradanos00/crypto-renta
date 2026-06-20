@@ -5,9 +5,10 @@ import type {
   FiscalYearReport,
   FullHistory,
   AppError,
+  SanitizedTransaction,
 } from "@/engine/types";
 
-type AppStatus = "idle" | "parsing" | "calculating" | "done" | "error";
+type AppStatus = "idle" | "reviewing" | "parsing" | "calculating" | "done" | "error";
 
 interface AppState {
   // Data
@@ -24,6 +25,7 @@ interface AppState {
   fullHistory: FullHistory | null;
   errors: AppError[];
   sendDecisions: Map<string, "own" | "third-party">;
+  pendingTransactions: SanitizedTransaction[];
 
   // Actions
   addCsvFile: (file: CsvFileEntry) => void;
@@ -38,6 +40,8 @@ interface AppState {
   addError: (error: AppError) => void;
   clearErrors: () => void;
   toggleSendDecision: (txId: string) => void;
+  setSendDecisions: (decisions: Map<string, "own" | "third-party">) => void;
+  setPendingTransactions: (txs: SanitizedTransaction[]) => void;
   reset: () => void;
 }
 
@@ -53,6 +57,7 @@ export const useAppStore = create<AppState>((set) => ({
   fullHistory: null,
   errors: [],
   sendDecisions: new Map(),
+  pendingTransactions: [],
 
   addCsvFile: (file) =>
     set((state) => ({ csvFiles: [...state.csvFiles, file] })),
@@ -92,6 +97,10 @@ export const useAppStore = create<AppState>((set) => ({
       return { sendDecisions: next };
     }),
 
+  setSendDecisions: (sendDecisions) => set({ sendDecisions }),
+
+  setPendingTransactions: (pendingTransactions) => set({ pendingTransactions }),
+
   reset: () =>
     set({
       csvFiles: [],
@@ -104,5 +113,6 @@ export const useAppStore = create<AppState>((set) => ({
       fullHistory: null,
       errors: [],
       sendDecisions: new Map(),
+      pendingTransactions: [],
     }),
 }));

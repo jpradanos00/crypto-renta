@@ -3,15 +3,16 @@
 import { useCallback } from "react";
 import { useAppStore } from "@/store/app-store";
 import { generateUUID } from "@/lib/uuid";
-import { processCSVsInMainThread } from "@/engine/worker/bridge-fallback";
+import { prepareCSVs, processCSVsInMainThread } from "@/engine/worker/bridge-fallback";
 import { CsvDropzone } from "@/components/csv-dropzone";
+import { ReviewScreen } from "@/components/review-screen";
 import { YearSelector } from "@/components/year-selector";
 import { ProgressIndicator } from "@/components/progress-indicator";
 import { ResultsDashboard } from "@/components/results-dashboard";
 import { OperationsTable } from "@/components/operations-table";
 import { WarningPanel } from "@/components/warning-panel";
 import { ExportButtons } from "@/components/export-buttons";
-import { Calculator, RotateCcw, Shield } from "lucide-react";
+import { Calculator, RotateCcw, Shield, ArrowRight, Eye } from "lucide-react";
 import type { DisposalEvent, IncomeEvent } from "@/engine/types";
 
 export function CalculadoraClient() {
@@ -25,17 +26,31 @@ export function CalculadoraClient() {
   const setFullHistory = useAppStore((s) => s.setFullHistory);
   const addError = useAppStore((s) => s.addError);
   const reset = useAppStore((s) => s.reset);
+  const setPendingTransactions = useAppStore((s) => s.setPendingTransactions);
+
+  const handleReview = useCallback(() => {
+    if (csvFiles.length === 0) return;
+    const csvTexts = csvFiles.map((f) => f.content);
+    try {
+      const transactions = prepareCSVs(csvTexts);
+      setPendingTransactions(transactions);
+      setStatus("reviewing");
+    } catch (err) {
+      addError({ id: generateUUID(), message: String(err) });
+      setStatus("error");
+    }
+  }, [csvFiles, setStatus, setPendingTransactions, addError]);
 
   const handleCalculate = useCallback(async () => {
-    if (csvFiles.length === 0) return;
-
-    const csvTexts = csvFiles.map((f) => f.content);
+    const txs = useAppStore.getState().pendingTransactions;
+    const decisions = useAppStore.getState().sendDecisions;
+    if (txs.length === 0) return;
 
     setStatus("calculating");
     setProgress({ phase: "Iniciando...", percent: 0 });
 
     try {
-      const result = await processCSVsInMainThread(csvTexts, (progress) => {
+      const result = await processCSVsInMainThread(txs, decisions, (progress) => {
         setProgress({ phase: progress.message, percent: progress.percent });
       });
 
@@ -64,22 +79,14 @@ export function CalculadoraClient() {
       addError({ id: generateUUID(), message: String(err) });
       setStatus("error");
     }
-  }, [
-    csvFiles,
-    setStatus,
-    setProgress,
-    setReport,
-    setReports,
-    setAvailableYears,
-    setFullHistory,
-    addError,
-  ]);
+  }, [setStatus, setProgress, setReport, setReports, setAvailableYears, setFullHistory, addError]);
 
   const handleReset = useCallback(() => {
     reset();
   }, [reset]);
 
   const hasFiles = csvFiles.length > 0;
+  const isReviewing = status === "reviewing";
   const isCalculating = status === "calculating";
   const isDone = status === "done";
   const isError = status === "error";
@@ -87,9 +94,8 @@ export function CalculadoraClient() {
   return (
     <div className="space-y-10">
       {/* ── Upload ── */}
-      {(!isDone && !isCalculating) && (
+      {(!isDone && !isCalculating && !isReviewing) && (
         <section aria-label="Importar archivos CSV" className="space-y-6">
-          {/* Header */}
           <div className="text-center">
             <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
               Declara tus criptomonedas sin sorpresas
@@ -100,7 +106,6 @@ export function CalculadoraClient() {
             </p>
           </div>
 
-          {/* Badge */}
           <div className="flex justify-center">
             <div className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1">
               <Shield className="h-3.5 w-3.5 text-gain" />
@@ -116,7 +121,7 @@ export function CalculadoraClient() {
             <div className="space-y-3">
               <button
                 type="button"
-                onClick={handleCalculate}
+                onClick={handleReview}
                 className="flex w-full items-center justify-center gap-2.5
                            rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600
                            px-5 py-3.5 text-sm font-bold text-white shadow-lg
@@ -127,13 +132,46 @@ export function CalculadoraClient() {
                            focus:ring-offset-2 focus:ring-offset-background
                            active:scale-[0.99]"
               >
-                <Calculator className="h-4 w-4" />
-                Calcular IRPF · {csvFiles.length}{" "}
+                <Eye className="h-4 w-4" />
+                Revisar transacciones · {csvFiles.length}{" "}
                 {csvFiles.length === 1 ? "archivo" : "archivos"}
               </button>
             </div>
           )}
         </section>
+      )}
+
+      {/* ── Review ── */}
+      {isReviewing && (
+        <div className="space-y-6">
+          <ReviewScreen />
+
+          <div className="flex items-center gap-3 justify-center">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+            >
+              ⬅ Volver
+            </button>
+            <button
+              type="button"
+              onClick={handleCalculate}
+              className="flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600
+                         px-6 py-3 text-sm font-bold text-white shadow-lg
+                         shadow-indigo-500/20 transition-all duration-200
+                         hover:from-indigo-500 hover:to-purple-500
+                         hover:shadow-indigo-500/30
+                         focus:outline-none focus:ring-2 focus:ring-indigo-500
+                         focus:ring-offset-2 focus:ring-offset-background
+                         active:scale-[0.99]"
+            >
+              <Calculator className="h-4 w-4" />
+              Calcular IRPF
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ── Calculating ── */}

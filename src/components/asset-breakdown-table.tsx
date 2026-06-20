@@ -65,7 +65,7 @@ export function AssetBreakdownTable({
                 <span className="hidden sm:inline">Valor de </span>Adquisición
               </th>
               <th className="pb-2 px-4 font-medium text-right">Ganancia / Pérdida</th>
-              <th className="pb-2 pl-4 font-medium text-right">Ops</th>
+              <th className="pb-2 pl-4 font-medium text-right" title="Número de ventas y swaps de este activo">Nº ops.</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">

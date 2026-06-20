@@ -39,6 +39,11 @@ export class FIFOEngine {
     { asset: string; quantity: Decimal }
   > = new Map();
   private transferLedger = new TransferLedger();
+  private sendDecisions: Map<string, "own" | "third-party">;
+
+  constructor(sendDecisions: Map<string, "own" | "third-party"> = new Map()) {
+    this.sendDecisions = sendDecisions;
+  }
 
   processTransaction(tx: SanitizedTransaction): void {
     switch (tx.type) {
@@ -256,14 +261,42 @@ export class FIFOEngine {
 
   private handleSend(tx: SanitizedTransaction): void {
     if (tx.quantity.lte(0)) return;
-    const { consumed: _consumed, consumedDetails, costBasisTotal: _cost } = this.consumeLotsDetailed(
+
+    const { consumed, consumedDetails, costBasisTotal } = this.consumeLotsDetailed(
       tx.asset,
       tx.quantity,
       tx.id
     );
-    void _consumed;
-    void _cost;
 
+    const isThirdParty = this.sendDecisions.get(tx.id) === "third-party";
+
+    if (isThirdParty) {
+      // Pago a tercero: genera DisposalEvent (transmisión sujeta)
+      const proceeds = tx.subtotal.abs();
+      const gainLoss = proceeds.minus(costBasisTotal);
+
+      this.disposals.push({
+        transactionId: tx.id,
+        timestamp: tx.timestamp,
+        asset: tx.asset,
+        quantityDisposed: tx.quantity,
+        proceedsEUR: proceeds,
+        costBasisEUR: costBasisTotal,
+        gainLossEUR: gainLoss,
+        lotsConsumed: consumed,
+        type: "Sell",
+      });
+
+      this.warnings.push({
+        transactionId: tx.id,
+        code: "SEND_TO_THIRD_PARTY",
+        message:
+          "Envío a tercero tratado como transmisión sujeta. Ganancia/pérdida generada con valor de mercado del envío.",
+      });
+      return;
+    }
+
+    // Wallet propia: transferencia no sujeta, lotes al TransferLedger
     const transferLots: TransferLot[] = consumedDetails.map((d) => ({
       costPerUnit: d.costPerUnit,
       quantityUsed: d.quantityUsed,
