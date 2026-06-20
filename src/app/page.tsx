@@ -137,7 +137,7 @@ export default function HomePage() {
                 </p>
                 {item.github && (
                   <a
-                    href="https://github.com/cryptorenta/app"
+                    href="https://github.com/jpradanos00/crypto-renta"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:underline"
