@@ -44,13 +44,15 @@ export function I18nProvider({
   defaultLocale?: Locale;
   onLocaleChange?: (locale: Locale) => void;
 }) {
-  const [locale, setLocaleState] = React.useState<Locale>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("cryptorenta-locale");
-      if (stored === "en" || stored === "es") return stored;
+  const [locale, setLocaleState] = React.useState<Locale>(defaultLocale);
+
+  // Sync from localStorage after mount — avoids hydration mismatch
+  useEffect(() => {
+    const stored = localStorage.getItem("cryptorenta-locale");
+    if (stored === "en" || stored === "es") {
+      setLocaleState(stored);
     }
-    return defaultLocale;
-  });
+  }, []);
 
   const setLocale = useCallback((newLocale: Locale) => {
     localStorage.setItem("cryptorenta-locale", newLocale);

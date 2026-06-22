@@ -4,17 +4,29 @@ import { I18nClientLayout } from "@/components/i18n-client-layout";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cryptorenta.app"),
-  title: "CryptoRenta - Cryptocurrency Tax Calculator for Spanish IRPF",
+  title:
+    "CryptoRenta - Calculadora Impuestos Criptomonedas IRPF España | Gratis y Privada",
   description:
-    "Calculate your cryptocurrency taxes for the Spanish IRPF from your exchange CSVs. 100% client-side, zero-knowledge, open source.",
+    "Calculadora fiscal de criptomonedas gratis para el IRPF español. Sin registro, 100% privada y open source. Alternativa a Koinly y Cointracker compatible con Hacienda.",
   keywords: [
-    "IRPF cryptocurrency",
-    "crypto tax calculator",
-    "Spain crypto taxes",
-    "bitcoin taxes Spain",
-    "FIFO cryptocurrency",
-    "Koinly free alternative",
-    "crypto fiscal calculator",
+    "calcular impuestos criptomonedas hacienda",
+    "declarar bitcoin renta 2024",
+    "como declarar criptomonedas irpf",
+    "calculadora fiscal criptomonedas gratis españa",
+    "impuestos criptomonedas irpf calculadora",
+    "declarar crypto hacienda 2025",
+    "IRPF criptomonedas FIFO",
+    "calcular renta criptomonedas gratis",
+    "alternativa gratis Koinly españa",
+    "calculadora impuestos crypto sin registro",
+    "crypto tax calculator Spain",
+    "Spanish IRPF crypto taxes free",
+    "declarar ganancias bitcoin",
+    "FIFO crypto tax Spain",
+    "informe fiscal criptomonedas AEAT",
+    "Cointracker alternativa gratis",
+    "calcular plusvalías criptomonedas hacienda",
+    "open source crypto tax calculator",
   ],
   alternates: {
     canonical: "https://cryptorenta.app",
@@ -29,6 +41,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   creator: "CryptoRenta",
@@ -36,17 +51,36 @@ export const metadata: Metadata = {
   referrer: "origin-when-cross-origin",
   category: "finance",
   openGraph: {
-    title: "CryptoRenta - Free Crypto Tax Calculator",
+    title:
+      "CryptoRenta - Calculadora IRPF Criptomonedas Gratis y Privada",
     description:
-      "Calculate your cryptocurrency taxes for the Spanish IRPF. 100% private, no server, open source.",
+      "Calcula tus impuestos de criptomonedas para el IRPF español. 100% privado, sin servidor, sin registro. Open source. Alternativa gratis a Koinly.",
     type: "website",
     locale: "es_ES",
+    siteName: "CryptoRenta",
+    url: "https://cryptorenta.app",
+    images: [
+      {
+        url: "https://cryptorenta.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "CryptoRenta - Calculadora de impuestos criptomonedas IRPF España",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CryptoRenta - Free Crypto Tax Calculator",
+    title:
+      "CryptoRenta - Calculadora IRPF Criptomonedas Gratis y Privada",
     description:
-      "Calculate your cryptocurrency taxes for the Spanish IRPF. 100% private, no server.",
+      "Calcula tus impuestos de criptomonedas para el IRPF español. 100% privado, sin servidor. Open source.",
+    images: ["https://cryptorenta.app/og-image.png"],
+    creator: "@cryptorenta",
+  },
+  other: {
+    "google-site-verification": "VERIFICATION_TOKEN_PLACEHOLDER",
+    "theme-color": "#0a0a0b",
+    "apple-mobile-web-app-title": "CryptoRenta",
   },
 };
 
@@ -58,9 +92,34 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>" />
+        <link
+          rel="preconnect"
+          href="https://github.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://www.youtube-nocookie.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="dns-prefetch" href="https://github.com" />
+        <link
+          rel="dns-prefetch"
+          href="https://www.youtube-nocookie.com"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://api.github.com"
+        />
+        <link
+          rel="icon"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>"
+        />
       </head>
-      <body className="antialiased min-h-screen bg-background text-foreground">
+      <body
+        className="antialiased min-h-screen bg-background text-foreground"
+        suppressHydrationWarning
+      >
         <I18nClientLayout>{children}</I18nClientLayout>
       </body>
     </html>

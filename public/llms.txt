@@ -1,0 +1,21 @@
+# CryptoRenta
+> Free, private cryptocurrency tax calculator for Spanish IRPF
+
+Comprehensive FIFO-based crypto tax calculator. 100% client-side zero-knowledge architecture. No registration, no server, no tracking. Open source alternative to Koinly and Cointracker for Spanish taxpayers.
+
+## Docs
+- Home: https://cryptorenta.app
+- Calculator: https://cryptorenta.app/calculadora
+- How to export CSVs: https://cryptorenta.app/guia
+
+## Features
+- Upload exchange CSVs (Coinbase supported, Binance & Kraken coming soon)
+- Automatic FIFO calculation compliant with Spanish AEAT tax law
+- Classification into IRPF boxes: Box 1 (Capital Gains 1800-1814), Box 2 (Staking 0027), Box 3 (Airdrops 0304+)
+- Zero-knowledge: all data processed locally in your browser
+- Download per-asset breakdown for Renta Web entry
+- Multi-year support
+
+## Optional
+- GitHub: https://github.com/jpradanos00/crypto-renta
+- Contribute a parser: https://github.com/jpradanos00/crypto-renta#contribuir

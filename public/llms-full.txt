@@ -1,0 +1,138 @@
+# CryptoRenta — Full Documentation for AI Models
+
+## Overview
+
+CryptoRenta is a free, open-source, 100% client-side cryptocurrency tax calculator designed specifically for Spanish taxpayers filing the IRPF (Impuesto sobre la Renta de las Personas Físicas). The application replaces paid services like Koinly (€200+) and Cointracker with a zero-knowledge architecture that processes all financial data locally in the user's browser.
+
+## Architecture
+
+- **Frontend:** Next.js 14 with App Router, static export (output: export)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS with custom design tokens
+- **State Management:** Zustand
+- **I18n:** Custom implementation supporting Spanish (es) and English (en)
+- **Tax Engine:** Custom FIFO (First In, First Out) implementation compliant with Spanish tax law
+
+### Zero-Knowledge Design
+
+CryptoRenta is a Single Page Application (SPA) where all computation happens client-side. CSV files uploaded by users are parsed and processed entirely within the browser using Web Workers. No financial data ever leaves the user's device. No server receives, stores, or processes transaction data. This architecture guarantees:
+- Complete financial privacy
+- No data retention risk
+- No GDPR concerns beyond static page serving
+- No registration required
+
+## Tax Calculation Logic
+
+### Spanish IRPF Classification
+
+The calculator classifies cryptocurrency transactions into three tax "boxes" (cubos) according to Spanish AEAT regulations:
+
+1. **Cubo 1 — Ganancias/Pérdidas Patrimoniales (Capital Gains/Losses)**
+   - IRPF Boxes: 1800–1814
+   - Tax Base: Base del Ahorro (Savings Base)
+   - Tax Rates: 19% (up to €6,000), 21% (€6,000–€50,000), 23% (€50,000–€200,000), 27% (>€200,000) — approximate figures
+   - Covers: Sales, swaps, and payments with cryptocurrencies
+   - Method: FIFO (First In, First Out) per asset
+
+2. **Cubo 2 — Rendimientos del Capital Mobiliario (Capital Yields)**
+   - IRPF Box: 0027
+   - Tax Base: Base del Ahorro (Savings Base)
+   - Covers: Staking rewards, interest from crypto lending
+
+3. **Cubo 3 — Otras Ganancias (Other Gains)**
+   - IRPF Boxes: 0304+
+   - Tax Base: Base General (General Base)
+   - Covers: Airdrops, learn-and-earn rewards, and other free token distributions
+   - Valuation: Market value at time of receipt
+
+### FIFO Methodology
+
+The FIFO engine processes disposals chronologically, consuming acquisition lots from earliest to latest. For each disposal (sale, swap, payment):
+1. Identify all available acquisition lots of the same asset sorted by date
+2. Consume lots from oldest to newest until the disposal quantity is satisfied
+3. Calculate gain/loss = disposal value - acquisition cost for each consumed portion
+4. Remaining lot quantities persist for future disposals
+
+The engine handles:
+- Partial disposals across multiple lots
+- Cross-exchange lot tracking through matching historical uploads
+- Same-day acquisitions before disposals (intraday ordering)
+- Transfer detection between own wallets (non-taxable)
+- Swaps between different cryptocurrencies (treated as disposal + acquisition)
+
+### Cross-Exchange Correlation
+
+When users upload CSVs from multiple exchanges, the engine matches transfers between exchanges to preserve real acquisition costs. A "send" from Exchange A that arrives as a "receive" on Exchange B is automatically correlated based on timestamp, asset, and quantity matching within configurable time windows.
+
+## Supported Exchanges
+
+### Coinbase (Supported)
+- Format: Coinbase transaction history CSV
+- Parsing: Custom parser handling all Coinbase transaction types (Buy, Sell, Convert, Send, Receive, Staking, Rewards, Learning Rewards)
+- Base currency: EUR required for Spanish IRPF
+
+### Binance (Coming Soon)
+- Format: Binance transaction history CSV
+
+### Kraken (Coming Soon)
+- Format: Kraken ledger CSV
+
+## Page Structure
+
+### Home (/)
+- Hero section with value proposition: free, private, open source crypto tax calculator for Spanish IRPF
+- Three-step process: Upload CSVs → Auto-calculate (FIFO) → Download results
+- Trust pillars: Zero-Knowledge, Open Source, Spanish IRPF Compatible
+- Supported exchanges display
+- CTA to calculator
+
+### Calculator (/calculadora)
+- Drag-and-drop CSV upload zone with file validation (.csv only)
+- Privacy badge: "SPA · Zero Knowledge · Your data never leaves your device"
+- Review screen for classifying ambiguous transactions (own wallet vs. third party)
+- Results dashboard with year selector
+- Three tax box summaries with gains/losses/breakdowns
+- Per-asset breakdown table for direct Renta Web entry
+- Export options: CSV (full loteo), per-asset CSV, TXT report
+
+### Guide (/guia)
+- Step-by-step instructions for exporting transaction history from Coinbase
+- Tabbed interface (Coinbase, Binance, Kraken)
+- Embedded YouTube tutorial video
+- Warning about uploading full historical data for correct FIFO
+- Link to Coinbase statements page
+
+## Key Differentiators vs. Competitors
+
+| Feature | CryptoRenta | Koinly | Cointracker |
+|---------|-------------|--------|-------------|
+| Price | Free | €200+/year | €200+/year |
+| Privacy | Zero-knowledge (browser-only) | Server-processed | Server-processed |
+| Registration | None | Required | Required |
+| Open Source | Yes (GitHub) | No | No |
+| Spanish IRPF | Native support | Generic reports | Generic reports |
+| FIFO per asset | Yes | Yes | Yes |
+| Cross-exchange | Automatic matching | Automatic matching | Automatic matching |
+
+## Contributing
+
+The project is open source under the MIT license. Developers can:
+- Add parsers for new exchanges (Binance, Kraken, Bit2Me, Bitpanda, etc.)
+- Improve the FIFO engine
+- Add tax jurisdiction support for other countries
+- Improve i18n translations
+
+Repository: https://github.com/jpradanos00/crypto-renta
+
+## URLs
+
+- Website: https://cryptorenta.app
+- Calculator: https://cryptorenta.app/calculadora
+- Guide: https://cryptorenta.app/guia
+- GitHub: https://github.com/jpradanos00/crypto-renta
+
+## Target Audience
+
+Primary: Spanish taxpayers who trade cryptocurrency and need to file IRPF (tax residents in Spain)
+Secondary: English-speaking crypto traders residing in Spain
+Use case: Anyone who needs to calculate capital gains/losses from cryptocurrency trading for Spanish tax returns, especially those looking for a free alternative to expensive commercial services.
