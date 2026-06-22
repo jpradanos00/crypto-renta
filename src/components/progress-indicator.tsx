@@ -1,9 +1,11 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { Loader2 } from "lucide-react";
 
 export function ProgressIndicator() {
+  const { t } = useT();
   const progress = useAppStore((s) => s.progress);
   const status = useAppStore((s) => s.status);
 
@@ -13,7 +15,7 @@ export function ProgressIndicator() {
     <div
       role="status"
       aria-live="polite"
-      aria-label="Procesando archivos"
+      aria-label={t("progress.ariaLabel")}
       className="flex min-h-[360px] flex-col items-center justify-center gap-8
                  rounded-2xl border border-border bg-card p-12"
     >
@@ -42,7 +44,7 @@ export function ProgressIndicator() {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Calculando en tu navegador · Ningún dato sale de este dispositivo
+        {t("progress.calculating")}
       </p>
     </div>
   );

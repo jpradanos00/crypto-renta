@@ -1,22 +1,10 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
-
-const WARNING_CODE_MAP: Record<string, string> = {
-  INSUFFICIENT_LOTS:
-    "Faltan lotes (probablemente por redondeo del exchange). Revisa que hayas subido todo el historial.",
-  SEND_AS_TRANSFER:
-    "Transferencia entre wallets no sujeta a impuestos.",
-  SEND_TO_THIRD_PARTY:
-    "Envío a tercero marcado como transmisión. Genera ganancia/pérdida patrimonial.",
-  UNKNOWN_TRANSACTION_TYPE: "Tipo de transacción no reconocido.",
-  CONVERT_PARSE_FAILED: "No se pudo interpretar el destino de un Convert.",
-  NEGATIVE_COST_BASIS: "Coste de adquisición negativo detectado.",
-  RECEIVE_UNMATCHED:
-    "Recepción externa sin transferencia de origen correlada. El coste de adquisición usa el precio de mercado del exchange receptor. Si este activo viene de otro exchange, sube también su CSV.",
-};
+import { useT } from "@/lib/i18n/context";
 
 export function WarningPanel() {
+  const { t } = useT();
   const report = useAppStore((s) => s.report);
   const status = useAppStore((s) => s.status);
 
@@ -33,8 +21,10 @@ export function WarningPanel() {
       <summary className="flex cursor-pointer items-center gap-3 p-4 text-sm font-medium text-warning focus:outline-none focus:ring-2 focus:ring-ring rounded-lg">
         <span aria-hidden="true">&#9888;&#65039;</span>
         <span>
-          {warnings.length} advertencia{warnings.length === 1 ? "" : "s"} detectada
-          {warnings.length === 1 ? "" : "s"}
+          {t("warnings.header", {
+            count: warnings.length,
+            countPlural: warnings.length === 1 ? "" : "s",
+          })}
         </span>
       </summary>
       <ul className="space-y-2 px-4 pb-4">
@@ -44,11 +34,11 @@ export function WarningPanel() {
             className="rounded-md bg-background p-3 text-sm border border-border"
           >
             <p className="font-medium text-foreground">
-              {WARNING_CODE_MAP[w.code] ?? w.code}
+              {t(`warnings.${w.code}` as never, undefined as never) ?? w.code}
             </p>
             <p className="text-muted-foreground">{w.message}</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Transacción: {w.transactionId}
+              {t("warnings.transaction", { id: w.transactionId })}
             </p>
           </li>
         ))}

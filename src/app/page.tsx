@@ -1,37 +1,58 @@
+"use client";
+
 import Link from "next/link";
 import { Calculator, Shield, Code2, Scale, ArrowRight } from "lucide-react";
+import { useT } from "@/lib/i18n/context";
+
+const CURRENT_YEAR = new Date().getFullYear();
 
 export default function HomePage() {
+  const { t } = useT();
+
   return (
-    <main className="flex min-h-screen flex-col">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "CryptoRenta",
+            "url": "https://cryptorenta.app",
+            "description": "Calculadora gratuita de impuestos de criptomonedas para el IRPF español. 100% privada, open source.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+          }),
+        }}
+      />
+      <main className="flex min-h-screen flex-col">
       {/* Hero */}
       <section className="flex flex-1 flex-col items-center justify-center px-4 py-24 text-center">
         <div className="max-w-3xl space-y-8">
           <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-7xl">
               CryptoRenta
             </h1>
             <p className="text-xl text-muted-foreground sm:text-2xl">
-              Calculadora de impuestos de criptomonedas para el IRPF español.
-              <br className="hidden sm:block" />
-              Rápida, privada y 100% gratuita.
+              {t("home.heroSubtitle")}
             </p>
           </div>
           <Link
             href="/calculadora"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-indigo-500/20 transition-all hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-background"
           >
-            Ir a la Calculadora
+            {t("home.cta")}
             <ArrowRight className="h-5 w-5" />
           </Link>
           <a
-            href="https://github.com/cryptorenta/app"
+            href="https://github.com/jpradanos00/crypto-renta"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:border-foreground/20"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            Open Source on GitHub
+            {t("home.github")}
           </a>
         </div>
       </section>
@@ -40,9 +61,9 @@ export default function HomePage() {
       <section className="border-t border-border bg-card px-4 py-20">
         <div className="mx-auto max-w-5xl space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-bold tracking-tight">Cómo funciona</h2>
+            <h2 className="text-3xl font-bold tracking-tight">{t("home.howTitle")}</h2>
             <p className="text-muted-foreground">
-              Calcula tu renta en tres pasos sencillos.
+              {t("home.howSubtitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -50,23 +71,20 @@ export default function HomePage() {
               {
                 step: "01",
                 icon: Calculator,
-                title: "Sube tus CSVs",
-                description:
-                  "Descarga tu historial de transacciones de Coinbase y súbelo aquí. Puedes subir varios archivos.",
+                title: t("home.step1Title"),
+                description: t("home.step1Desc"),
               },
               {
                 step: "02",
                 icon: Code2,
-                title: "Calcula automáticamente",
-                description:
-                  "Nuestro motor FIFO procesa todas tus operaciones y clasifica las ganancias según la normativa española.",
+                title: t("home.step2Title"),
+                description: t("home.step2Desc"),
               },
               {
                 step: "03",
                 icon: Scale,
-                title: "Descarga resultados",
-                description:
-                  "Visualiza tus cubos fiscales por año y revisa el desglose completo de cada operación.",
+                title: t("home.step3Title"),
+                description: t("home.step3Desc"),
               },
             ].map((item) => (
               <div
@@ -78,7 +96,7 @@ export default function HomePage() {
                     <item.icon className="h-5 w-5" />
                   </div>
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Paso {item.step}
+                    {t("home.stepLabel", { step: item.step })}
                   </span>
                 </div>
                 <h3 className="text-lg font-semibold">{item.title}</h3>
@@ -96,32 +114,29 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-bold tracking-tight">
-              Diseñado para tu tranquilidad
+              {t("home.trustTitle")}
             </h2>
             <p className="text-muted-foreground">
-              Tu privacidad es nuestra prioridad absoluta.
+              {t("home.trustSubtitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {[
               {
                 icon: Shield,
-                title: "Zero-Knowledge",
-                description:
-                  "Tus datos financieros nunca salen de tu navegador. Todo el procesamiento se realiza localmente en tu dispositivo.",
+                title: t("home.trustZkTitle"),
+                description: t("home.trustZkDesc"),
               },
               {
                 icon: Code2,
-                title: "Código abierto",
-                description:
-                  "El motor de cálculo es completamente transparente. Puedes auditar el código y verificar los resultados.",
+                title: t("home.trustOpenTitle"),
+                description: t("home.trustOpenDesc"),
                 github: true,
               },
               {
                 icon: Scale,
-                title: "Compatible con IRPF España",
-                description:
-                  "Clasificación automática en Cubo 1, 2 y 3 según la normativa fiscal española vigente.",
+                title: t("home.trustIrpfTitle"),
+                description: t("home.trustIrpfDesc"),
               },
             ].map((item) => (
               <div
@@ -143,7 +158,7 @@ export default function HomePage() {
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:underline"
                   >
                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                    Ver en GitHub
+                    {t("home.viewOnGithub")}
                   </a>
                 )}
               </div>
@@ -152,20 +167,45 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Exchanges compatibles */}
+      <section className="border-t border-border px-4 py-20">
+        <div className="mx-auto max-w-5xl space-y-8">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-bold tracking-tight">
+              {t("dropzone.exchangesSupported")}
+            </h2>
+            <p className="text-muted-foreground">
+              {t("home.exchangeComingSoon")}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <span className="inline-flex items-center gap-2 rounded-full border border-gain/30 bg-gain/10 px-4 py-2 text-sm font-medium text-gain">
+              {t("dropzone.exchangeCoinbase")} <span aria-label="compatible">✅</span>
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-warning/30 bg-warning/10 px-4 py-2 text-sm font-medium text-warning">
+              {t("dropzone.exchangeBinance")} <span aria-label="coming soon">🔜</span>
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-warning/30 bg-warning/10 px-4 py-2 text-sm font-medium text-warning">
+              {t("dropzone.exchangeKraken")} <span aria-label="coming soon">🔜</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="border-t border-border bg-card px-4 py-16">
         <div className="mx-auto max-w-3xl text-center space-y-6">
           <h2 className="text-2xl font-bold tracking-tight">
-            ¿Listo para calcular tu renta?
+            {t("home.ctaReady")}
           </h2>
           <p className="text-muted-foreground">
-            Empieza ahora mismo. No necesitas registrarte.
+            {t("home.ctaStart")}
           </p>
           <Link
             href="/calculadora"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-indigo-500/20 transition-all hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-background"
           >
-            Ir a la Calculadora
+            {t("home.cta")}
             <ArrowRight className="h-5 w-5" />
           </Link>
         </div>
@@ -175,11 +215,11 @@ export default function HomePage() {
       <footer className="border-t border-border px-4 py-8">
         <div className="mx-auto max-w-5xl flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} CryptoRenta
+            {t("home.footerCopyright", { year: CURRENT_YEAR })}
           </p>
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-4">
             <a
-              href="https://github.com/cryptorenta/app"
+              href="https://github.com/jpradanos00/crypto-renta"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-2 transition-colors"
@@ -188,12 +228,12 @@ export default function HomePage() {
               GitHub
             </a>
             <p className="text-xs text-muted-foreground">
-              Esta herramienta es solo informativa. Consulta a un asesor fiscal
-              para declaraciones oficiales.
+              {t("home.footerDisclaimer")}
             </p>
           </div>
         </div>
       </footer>
     </main>
+    </>
   );
 }

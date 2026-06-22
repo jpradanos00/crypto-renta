@@ -1,8 +1,10 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 
 export function YearSelector() {
+  const { t } = useT();
   const availableYears = useAppStore((s) => s.availableYears);
   const selectedYear = useAppStore((s) => s.selectedYear);
   const setSelectedYear = useAppStore((s) => s.setSelectedYear);
@@ -22,7 +24,7 @@ export function YearSelector() {
   return (
     <div className="flex items-center gap-3">
       <label htmlFor="year-select" className="text-sm font-medium">
-        Año fiscal
+        {t("year.label")}
       </label>
       <select
         id="year-select"

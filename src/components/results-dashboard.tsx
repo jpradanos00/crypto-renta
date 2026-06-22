@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { formatEUR } from "@/lib/decimal";
 import { AssetBreakdownTable } from "@/components/asset-breakdown-table";
 import { TrendingUp, TrendingDown, Minus, BarChart3, Wallet, Sparkles } from "lucide-react";
@@ -56,6 +57,7 @@ function CubeCard({
 }
 
 export function ResultsDashboard() {
+  const { t } = useT();
   const report = useAppStore((s) => s.report);
   const status = useAppStore((s) => s.status);
 
@@ -67,9 +69,9 @@ export function ResultsDashboard() {
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
           <BarChart3 className="h-6 w-6" />
         </div>
-        <h3 className="text-lg font-semibold">Sin datos para este año</h3>
+        <h3 className="text-lg font-semibold">{t("results.noDataTitle")}</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          No se encontraron operaciones en el año fiscal seleccionado. Prueba con otro año.
+          {t("results.noDataBody")}
         </p>
       </div>
     );
@@ -80,35 +82,35 @@ export function ResultsDashboard() {
   const c3 = report.cubo3;
 
   return (
-    <div className="space-y-6" role="region" aria-label="Resumen fiscal por apartados">
+    <div className="space-y-6" role="region" aria-label={t("results.fiscalSummary")}>
       <p className="text-xs text-muted-foreground">
-        Resultados para la declaración del IRPF en España (AEAT)
+        {t("results.irpfLabel")}
       </p>
       <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
         <CubeCard
-          title="Ganancias/Pérdidas Patrimoniales"
-          casilla="Casillas 1800–1814"
-          base="Base del Ahorro"
+          title={t("results.cubo1Title")}
+          casilla={t("results.cubo1Box")}
+          base={t("results.baseSavings")}
           amount={c1.netGainLossEUR}
-          description="Ventas y swaps de criptomonedas. Método FIFO por activo."
+          description={t("results.cubo1Desc")}
           icon={BarChart3}
           colorClass="bg-primary"
         />
         <CubeCard
-          title="Rendimientos del Capital (Staking)"
-          casilla="Casilla 0027"
-          base="Base del Ahorro"
+          title={t("results.cubo2Title")}
+          casilla={t("results.cubo2Box")}
+          base={t("results.baseSavings")}
           amount={c2.totalIncomeEUR}
-          description="Intereses y recompensas de staking recibidos durante el ejercicio."
+          description={t("results.cubo2Desc")}
           icon={Wallet}
           colorClass="bg-gain"
         />
         <CubeCard
-          title="Otras Ganancias (Airdrops)"
-          casilla="Casillas 0304+"
-          base="Base General"
+          title={t("results.cubo3Title")}
+          casilla={t("results.cubo3Box")}
+          base={t("results.baseGeneral")}
           amount={c3.totalIncomeEUR}
-          description="Airdrops y recompensas. Valor de mercado en el momento de recepción."
+          description={t("results.cubo3Desc")}
           icon={Sparkles}
           colorClass="bg-warning"
         />
@@ -118,19 +120,19 @@ export function ResultsDashboard() {
         {/* Neto detallado Cubo 1 */}
         <div className="rounded-xl border border-border bg-card p-5">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Desglose Ganancias/Pérdidas Patrimoniales
+            {t("results.breakdownTitle")}
           </h4>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-muted-foreground">Ganancias</p>
+              <p className="text-xs text-muted-foreground">{t("results.gains")}</p>
               <p className="text-lg font-bold text-gain font-mono-nums">{formatEUR(c1.totalGainsEUR)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Pérdidas</p>
+              <p className="text-xs text-muted-foreground">{t("results.losses")}</p>
               <p className="text-lg font-bold text-loss font-mono-nums">{formatEUR(c1.totalLossesEUR)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Neto</p>
+              <p className="text-xs text-muted-foreground">{t("results.net")}</p>
               <p className={`text-lg font-bold font-mono-nums ${c1.netGainLossEUR.gte(0) ? "text-gain" : "text-loss"}`}>
                 {formatEUR(c1.netGainLossEUR)}
               </p>

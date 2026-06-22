@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "../test-utils";
 import { OperationsTable } from "@/components/operations-table";
 import { useAppStore } from "@/store/app-store";
 import { d } from "@/lib/decimal";
@@ -41,10 +41,11 @@ function makeReport(txs: SanitizedTransaction[]): FiscalYearReport {
 
 describe("OperationsTable", () => {
   beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState ? useAppStore.getInitialState() : {
+    useAppStore.setState({
       csvFiles: [], rawTransactions: [], status: "idle", progress: { phase: "", percent: 0 },
       selectedYear: new Date().getFullYear() - 1, report: null, reports: new Map(),
       availableYears: [], fullHistory: null, errors: [],
+      sendDecisions: new Map(), pendingTransactions: [],
     });
   });
 
@@ -71,7 +72,7 @@ describe("OperationsTable", () => {
     fireEvent.click(toggle);
     expect(screen.getByText("BTC")).toBeInTheDocument();
     expect(screen.getByText("ETH")).toBeInTheDocument();
-    expect(screen.getByText("Página 1 de 1")).toBeInTheDocument();
+    expect(screen.getByText(/Página 1 de 1/i)).toBeInTheDocument();
   });
 
   it("sorts by date when header clicked", () => {

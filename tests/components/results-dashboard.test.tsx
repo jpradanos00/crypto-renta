@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "../test-utils";
 import { ResultsDashboard } from "@/components/results-dashboard";
 import { useAppStore } from "@/store/app-store";
 import { d } from "@/lib/decimal";
@@ -30,10 +30,11 @@ function makeReport(overrides?: Partial<FiscalYearReport>): FiscalYearReport {
 
 describe("ResultsDashboard", () => {
   beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState ? useAppStore.getInitialState() : {
+    useAppStore.setState({
       csvFiles: [], rawTransactions: [], status: "idle", progress: { phase: "", percent: 0 },
       selectedYear: new Date().getFullYear() - 1, report: null, reports: new Map(),
       availableYears: [], fullHistory: null, errors: [],
+      sendDecisions: new Map(), pendingTransactions: [],
     });
   });
 

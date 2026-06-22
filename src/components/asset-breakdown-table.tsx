@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useT } from "@/lib/i18n/context";
 import { formatEUR, ZERO } from "@/lib/decimal";
 import { groupDisposalsByAsset } from "@/lib/fiscal-helpers";
 import type { DisposalEvent } from "@/engine/types";
@@ -18,11 +19,11 @@ export function AssetBreakdownTable({
   disposals,
   netGainLossEUR,
 }: AssetBreakdownTableProps) {
+  const { t } = useT();
   const breakdown = useMemo(() => groupDisposalsByAsset(disposals), [disposals]);
 
   if (breakdown.length === 0) return null;
 
-  // Verify integrity: sum of all breakdowns should equal global totals
   const sumTransmission = breakdown.reduce(
     (acc, b) => acc.plus(b.transmissionValueEUR),
     ZERO
@@ -43,15 +44,11 @@ export function AssetBreakdownTable({
         <div className="flex items-center gap-2 mb-2">
           <Coins className="h-4 w-4 text-primary" />
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Declaración por moneda
+            {t("assetBreakdown.title")}
           </h4>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Copia estos valores exactos añadiendo un nuevo elemento por cada moneda
-          en el apartado de <strong>Monedas Virtuales</strong> de Renta Web.
-          Si una moneda tiene tanto ventas a EUR como swaps a crypto,
-          necesitarás <strong>dos entradas separadas</strong> con distinto tipo
-          de contraprestación.
+          {t("assetBreakdown.description")}
         </p>
       </div>
 
@@ -60,16 +57,16 @@ export function AssetBreakdownTable({
         <table className="w-full text-sm" role="table" aria-label="Desglose por activo para Renta Web">
           <thead>
             <tr className="border-b border-border text-left text-xs text-muted-foreground uppercase tracking-wider">
-              <th className="pb-2 pr-4 font-medium">Moneda</th>
-              <th className="pb-2 px-4 font-medium text-right">
-                <span className="hidden sm:inline">Valor de </span>Transmisión
+              <th scope="col" className="pb-2 pr-4 font-medium">{t("assetBreakdown.colAsset")}</th>
+              <th scope="col" className="pb-2 px-4 font-medium text-right">
+                <span className="hidden sm:inline">{t("assetBreakdown.colTransmission").split(" ")[0]} </span>{t("assetBreakdown.colTransmission").split(" ").slice(1).join(" ")}
               </th>
-              <th className="pb-2 px-4 font-medium text-right">
-                <span className="hidden sm:inline">Valor de </span>Adquisición
+              <th scope="col" className="pb-2 px-4 font-medium text-right">
+                <span className="hidden sm:inline">{t("assetBreakdown.colAcquisition").split(" ")[0]} </span>{t("assetBreakdown.colAcquisition").split(" ").slice(1).join(" ")}
               </th>
-              <th className="pb-2 px-4 font-medium text-right">Ganancia / Pérdida</th>
-              <th className="pb-2 pl-4 font-medium text-right" title="Número de ventas y swaps de este activo">Nº ops.</th>
-              <th className="pb-2 pl-4 font-medium text-center" title="Tipo de contraprestación recibida a cambio. Indícalo en Renta Web.">Contraprest.</th>
+              <th scope="col" className="pb-2 px-4 font-medium text-right">{t("assetBreakdown.colGainLoss")}</th>
+              <th scope="col" className="pb-2 pl-4 font-medium text-right" title={t("assetBreakdown.colOpsTitle")}>{t("assetBreakdown.colOps")}</th>
+              <th scope="col" className="pb-2 pl-4 font-medium text-center" title={t("assetBreakdown.colCounterTitle")}>{t("assetBreakdown.colCounter")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -102,11 +99,11 @@ export function AssetBreakdownTable({
                   </td>
                   <td className="py-3 pl-4 text-center text-xs font-mono-nums">
                     {item.hasSell && item.hasConvert ? (
-                      <span className="text-warning" title="Requiere dos entradas en Renta Web: una para EUR y otra para crypto">EUR + Crypto</span>
+                      <span className="text-warning" title={t("assetBreakdown.counterBothTitle")}>{t("assetBreakdown.counterBoth")}</span>
                     ) : item.hasSell ? (
-                      <span className="text-gain" title="Moneda de curso legal (EUR)">EUR</span>
+                      <span className="text-gain" title={t("assetBreakdown.counterEurTitle")}>{t("assetBreakdown.counterEur")}</span>
                     ) : (
-                      <span className="text-indigo-400" title="Virtual (otra criptomoneda)">Crypto</span>
+                      <span className="text-indigo-400" title={t("assetBreakdown.counterCryptoTitle")}>{t("assetBreakdown.counterCrypto")}</span>
                     )}
                   </td>
                 </tr>
@@ -115,7 +112,7 @@ export function AssetBreakdownTable({
 
             {/* Totals row */}
             <tr className="border-t-2 border-border bg-muted/20 font-semibold">
-              <td className="py-3 pr-4 text-foreground">TOTAL</td>
+              <td className="py-3 pr-4 text-foreground">{t("assetBreakdown.total")}</td>
               <td className="py-3 px-4 text-right font-mono-nums text-foreground">
                 {formatEUR(sumTransmission)}
               </td>
@@ -146,8 +143,7 @@ export function AssetBreakdownTable({
         <div className="mt-3 flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
           <p className="text-xs text-warning">
-            Advertencia: la suma del desglose no coincide con el total global.
-            Diferencia: {formatEUR(sumProfitLoss.minus(netGainLossEUR))}
+            {t("assetBreakdown.integrityWarning", { diff: formatEUR(sumProfitLoss.minus(netGainLossEUR)) })}
           </p>
         </div>
       )}

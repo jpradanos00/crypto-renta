@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { formatEUR } from "@/lib/decimal";
 import { ChevronDown, ChevronUp, TableProperties } from "lucide-react";
 import type { SanitizedTransaction } from "@/engine/types";
@@ -9,6 +10,7 @@ import type { SanitizedTransaction } from "@/engine/types";
 const PAGE_SIZE = 50;
 
 export function OperationsTable() {
+  const { t, locale } = useT();
   const report = useAppStore((s) => s.report);
   const status = useAppStore((s) => s.status);
   const sendDecisions = useAppStore((s) => s.sendDecisions);
@@ -26,9 +28,9 @@ export function OperationsTable() {
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
           <TableProperties className="h-6 w-6" />
         </div>
-        <h3 className="text-lg font-semibold">Sin operaciones</h3>
+        <h3 className="text-lg font-semibold">{t("operations.noOpsTitle")}</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          No hay transacciones registradas para el año fiscal seleccionado.
+          {t("operations.noOpsBody")}
         </p>
       </div>
     );
@@ -73,7 +75,7 @@ export function OperationsTable() {
   const toggleSort = () => setSortAsc((prev) => !prev);
 
   const formatDate = (d: Date) =>
-    d.toLocaleDateString("es-ES", {
+    d.toLocaleDateString(locale === "en" ? "en-US" : "es-ES", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -119,7 +121,7 @@ export function OperationsTable() {
       >
         <div className="flex items-center gap-2.5">
           <TableProperties className="h-4 w-4 text-indigo-400" />
-          <span className="text-sm font-semibold">Ver detalle de operaciones</span>
+          <span className="text-sm font-semibold">{t("operations.viewDetail")}</span>
           <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-xs font-medium text-indigo-300">
             {sorted.length}
           </span>
@@ -136,7 +138,7 @@ export function OperationsTable() {
           {/* Exchange filters */}
           {uniqueSources.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground">Filtrar por exchange:</span>
+              <span className="text-xs font-medium text-muted-foreground">{t("operations.filterExchange")}</span>
               {uniqueSources.map((source) => (
                 <label
                   key={source}
@@ -166,7 +168,7 @@ export function OperationsTable() {
           )}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <caption className="sr-only">Tabla de transacciones del año fiscal</caption>
+              <caption className="sr-only">{t("operations.tableCaption")}</caption>
               <thead className="bg-muted">
                 <tr>
                   <th scope="col" className="px-4 py-3 text-left">
@@ -174,17 +176,17 @@ export function OperationsTable() {
                       onClick={toggleSort}
                       className="flex items-center gap-1 font-semibold"
                     >
-                      Fecha {sortAsc ? "▲" : "▼"}
+                      {t("operations.colDate")} {sortAsc ? "▲" : "▼"}
                     </button>
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left">Tipo</th>
-                  <th scope="col" className="px-4 py-3 text-left">Exchange</th>
-                  <th scope="col" className="px-4 py-3 text-left">Activo</th>
-                  <th scope="col" className="px-4 py-3 text-right">Cantidad</th>
-                  <th scope="col" className="px-4 py-3 text-right">Valor EUR</th>
-                  <th scope="col" className="px-4 py-3 text-right">Gan/Pérd</th>
-                  <th scope="col" className="px-4 py-3 text-center">Box</th>
-                  <th scope="col" className="px-4 py-3 text-center">Envío</th>
+                  <th scope="col" className="px-4 py-3 text-left">{t("operations.colType")}</th>
+                  <th scope="col" className="px-4 py-3 text-left">{t("operations.colExchange")}</th>
+                  <th scope="col" className="px-4 py-3 text-left">{t("operations.colAsset")}</th>
+                  <th scope="col" className="px-4 py-3 text-right">{t("operations.colQuantity")}</th>
+                  <th scope="col" className="px-4 py-3 text-right">{t("operations.colValueEur")}</th>
+                  <th scope="col" className="px-4 py-3 text-right">{t("operations.colGainLoss")}</th>
+                  <th scope="col" className="px-4 py-3 text-center">{t("operations.colBox")}</th>
+                  <th scope="col" className="px-4 py-3 text-center">{t("operations.colSend")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -212,13 +214,13 @@ export function OperationsTable() {
                           }`}
                           title={
                             sendDecisions.get(tx.id) === "third-party"
-                              ? "Marcado como pago a tercero — clic para cambiar"
-                              : "Wallet propia — clic si es pago a tercero"
+                              ? t("operations.sendThirdPartyTitle")
+                              : t("operations.sendOwnTitle")
                           }
                         >
                           {sendDecisions.get(tx.id) === "third-party"
-                            ? "Tercero"
-                            : "Propia"}
+                            ? t("operations.sendThirdParty")
+                            : t("operations.sendOwn")}
                         </button>
                       ) : null}
                     </td>
@@ -235,10 +237,10 @@ export function OperationsTable() {
               disabled={currentPage === 0}
               className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Anterior
+              {t("operations.previous")}
             </button>
             <span className="text-sm text-muted-foreground">
-              Página {currentPage + 1} de {totalPages}
+              {t("operations.pageOf", { current: currentPage + 1, total: totalPages })}
             </span>
             <button
               type="button"
@@ -246,7 +248,7 @@ export function OperationsTable() {
               disabled={currentPage >= totalPages - 1}
               className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Siguiente
+              {t("operations.next")}
             </button>
           </div>
         </div>

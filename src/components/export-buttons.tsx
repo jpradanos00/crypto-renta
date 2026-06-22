@@ -1,11 +1,13 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { groupDisposalsByAsset } from "@/lib/fiscal-helpers";
 import { ZERO } from "@/lib/decimal";
 import { Download, FileText, Coins } from "lucide-react";
 
 export function ExportButtons() {
+  const { t } = useT();
   const report = useAppStore((s) => s.report);
   const selectedYear = useAppStore((s) => s.selectedYear);
 
@@ -13,12 +15,12 @@ export function ExportButtons() {
 
   const exportCSV = () => {
     const rows: string[] = [
-      ["Año", "Tax Box", "Concepto", "Importe EUR"].join(";"),
-      [selectedYear, "1", "Ganancias", report.cubo1.totalGainsEUR.toFixed(2)].join(";"),
-      [selectedYear, "1", "Pérdidas", report.cubo1.totalLossesEUR.toFixed(2)].join(";"),
-      [selectedYear, "1", "Neto", report.cubo1.netGainLossEUR.toFixed(2)].join(";"),
-      [selectedYear, "2", "Rendimientos", report.cubo2.totalIncomeEUR.toFixed(2)].join(";"),
-      [selectedYear, "3", "Otras ganancias", report.cubo3.totalIncomeEUR.toFixed(2)].join(";"),
+      [String(selectedYear), "Tax Box", t("export.txtHeader1"), "EUR"].join(";"),
+      [String(selectedYear), "1", t("export.txtGains"), report.cubo1.totalGainsEUR.toFixed(2)].join(";"),
+      [String(selectedYear), "1", t("export.txtLosses"), report.cubo1.totalLossesEUR.toFixed(2)].join(";"),
+      [String(selectedYear), "1", t("export.txtNet"), report.cubo1.netGainLossEUR.toFixed(2)].join(";"),
+      [String(selectedYear), "2", t("results.cubo2Title"), report.cubo2.totalIncomeEUR.toFixed(2)].join(";"),
+      [String(selectedYear), "3", t("results.cubo3Title"), report.cubo3.totalIncomeEUR.toFixed(2)].join(";"),
     ];
 
     const blob = new Blob(["\uFEFF" + rows.join("\n")], {
@@ -35,12 +37,19 @@ export function ExportButtons() {
   const exportAssetCSV = () => {
     const breakdown = groupDisposalsByAsset(report.cubo1.disposals);
     const rows: string[] = [
-      ["Año", "Moneda", "Valor de Transmisión (EUR)", "Valor de Adquisición (EUR)", "Ganancia/Pérdida (EUR)", "Operaciones"].join(";"),
+      [
+        String(selectedYear),
+        t("assetBreakdown.colAsset"),
+        t("assetBreakdown.colTransmission") + " (EUR)",
+        t("assetBreakdown.colAcquisition") + " (EUR)",
+        t("assetBreakdown.colGainLoss") + " (EUR)",
+        t("assetBreakdown.colOps"),
+      ].join(";"),
     ];
     for (const b of breakdown) {
       rows.push(
         [
-          selectedYear,
+          String(selectedYear),
           b.asset,
           b.transmissionValueEUR.toFixed(2),
           b.acquisitionValueEUR.toFixed(2),
@@ -60,8 +69,8 @@ export function ExportButtons() {
     );
     rows.push(
       [
-        selectedYear,
-        "TOTAL",
+        String(selectedYear),
+        t("assetBreakdown.total"),
         totalTransmission.toFixed(2),
         totalAcquisition.toFixed(2),
         report.cubo1.netGainLossEUR.toFixed(2),
@@ -82,24 +91,24 @@ export function ExportButtons() {
 
   const exportText = () => {
     const lines = [
-      "Informe para la declaración del IRPF España (AEAT)",
-      `=== CryptoRenta · Informe Fiscal ${selectedYear} ===`,
+      t("export.txtHeader1"),
+      t("export.txtHeader2", { year: selectedYear }),
       "",
-      "BOX 1 - Ganancias/Pérdidas Patrimoniales (Casillas 1800-1814)",
-      `  Ganancias:  ${report.cubo1.totalGainsEUR.toFixed(2)} EUR`,
-      `  Pérdidas:   ${report.cubo1.totalLossesEUR.toFixed(2)} EUR`,
-      `  NETO:       ${report.cubo1.netGainLossEUR.toFixed(2)} EUR`,
+      t("export.txtBox1"),
+      `  ${t("export.txtGains")}:  ${report.cubo1.totalGainsEUR.toFixed(2)} EUR`,
+      `  ${t("export.txtLosses")}:   ${report.cubo1.totalLossesEUR.toFixed(2)} EUR`,
+      `  ${t("export.txtNet")}:       ${report.cubo1.netGainLossEUR.toFixed(2)} EUR`,
       "",
-      "BOX 2 - Rendimientos del Capital Mobiliario (Casilla 0027)",
-      `  Total:      ${report.cubo2.totalIncomeEUR.toFixed(2)} EUR`,
-      `  Operaciones: ${report.cubo2.incomes.length}`,
+      t("export.txtBox2"),
+      `  ${t("export.txtTotal")}:      ${report.cubo2.totalIncomeEUR.toFixed(2)} EUR`,
+      `  ${t("export.txtOps")}: ${report.cubo2.incomes.length}`,
       "",
-      "BOX 3 - Otras Ganancias (Casillas 0304+)",
-      `  Total:      ${report.cubo3.totalIncomeEUR.toFixed(2)} EUR`,
-      `  Operaciones: ${report.cubo3.incomes.length}`,
+      t("export.txtBox3"),
+      `  ${t("export.txtTotal")}:      ${report.cubo3.totalIncomeEUR.toFixed(2)} EUR`,
+      `  ${t("export.txtOps")}: ${report.cubo3.incomes.length}`,
       "",
       "============================================",
-      "Esta herramienta es informativa. Consulta con un asesor fiscal.",
+      t("export.txtDisclaimer"),
     ];
 
     const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
@@ -115,27 +124,27 @@ export function ExportButtons() {
     <div className="flex items-center gap-2">
       <button
         onClick={exportCSV}
-        className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
-        title="Descargar como CSV"
+        className="flex items-center gap-1.5 rounded-lg border border-border px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+        title={t("export.csvTitle")}
       >
         <Download className="h-3.5 w-3.5" />
-        CSV
+        {t("export.csv")}
       </button>
       <button
         onClick={exportAssetCSV}
-        className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
-        title="Descargar desglose por moneda"
+        className="flex items-center gap-1.5 rounded-lg border border-border px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+        title={t("export.assetCsvTitle")}
       >
         <Coins className="h-3.5 w-3.5" />
-        Por moneda
+        {t("export.assetCsv")}
       </button>
       <button
         onClick={exportText}
-        className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
-        title="Descargar como texto"
+        className="flex items-center gap-1.5 rounded-lg border border-border px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+        title={t("export.txtTitle")}
       >
         <FileText className="h-3.5 w-3.5" />
-        TXT
+        {t("export.txt")}
       </button>
     </div>
   );

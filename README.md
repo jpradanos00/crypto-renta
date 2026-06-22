@@ -1,40 +1,73 @@
-# CryptoRenta
+# 🧮 CryptoRenta
 
-**Calculadora fiscal de criptomonedas para el IRPF español.**
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![Decimal.js](https://img.shields.io/badge/precisi%C3%B3n-40%20decimales-purple)](https://github.com/MikeMcl/decimal.js-light)
 
-Zero‑knowledge, 100% client‑side. Sin servidor, sin telemetría, sin que tus datos salgan del navegador.
+**Calculadora de impuestos de criptomonedas para el IRPF español. 100% privada, gratuita y open source.**
 
----
+> ¿Harto de pagar 200€ por Koinly o Cointracker? CryptoRenta calcula tus impuestos crypto para la declaración de la renta española sin que tus datos salgan jamás de tu navegador.
 
-## Qué hace
-
-Convierte el historial de transacciones de Coinbase en el desglose exacto que necesitas para declarar criptomonedas en la Renta española:
-
-- **Casillas 1800–1814** — Ganancias y pérdidas patrimoniales (Base del Ahorro)
-- **Casilla 0027** — Rendimientos del capital mobiliario: staking y recompensas
-- **Casillas 0304+** — Otras ganancias: airdrops, Coinbase Earn, etc.
-
-Todo calculado con **FIFO por activo**, **Decimal de precisión arbitraria** (nada de floats de JavaScript) y **zona horaria española** (Europe/Madrid) para el corte de año fiscal.
+[🌐 Demo](https://cryptorenta.app) · [📖 Guía de uso](https://cryptorenta.app/guia) · [🐛 Reportar bug](https://github.com/jpradanos00/crypto-renta/issues)
 
 ---
 
-## Cómo usar
+## ✨ Características
 
-### 1. Exporta tu CSV de Coinbase
+- **🇪🇸 Preparado para IRPF España** — Cubo 1 (Ganancias/Pérdidas 1800-1814), Cubo 2 (Staking 0027), Cubo 3 (Airdrops 0304+)
+- **🔒 Zero-Knowledge** — Procesamiento 100% local vía Web Workers. Tus CSVs nunca llegan a un servidor.
+- **📊 FIFO por activo** — Método First-In-First-Out según normativa AEAT
+- **🧮 Precisión decimal** — Cálculos con `decimal.js-light` (40 decimales), sin errores de redondeo de JavaScript
+- **🔄 Multi-exchange** — Arquitectura preparada para múltiples exchanges. Transferencias cross-exchange con correlación automática.
+- **🗑️ Deduplicación automática** — Múltiples CSVs, IDs de transacción deduplicados
+- **📱 Responsive** — Funciona en escritorio y móvil
+- **🌍 Bilingüe** — Español e Inglés
 
-Ve a **Coinbase → Configuración → Informes → Historial de transacciones** y genera el CSV.
+---
 
-### 2. Arrástralo a la calculadora
+## 🚀 Cómo usar
 
-Acepta múltiples CSVs. Se deduplican automáticamente por ID de transacción.
+### 1. Exporta tu historial de transacciones
 
-### 3. Revisa y copia a Renta Web
+Ve a tu exchange y genera el CSV con el historial completo de transacciones:
+
+- **Coinbase** → Configuración → Informes → Historial de transacciones
+
+⚠️ **Importante:** Sube todo tu historial desde el primer día. El algoritmo FIFO necesita todas las compras para calcular correctamente el coste de adquisición de cada venta.
+
+### 2. Arrástralos a la calculadora
+
+Ve a [cryptorenta.app/calculadora](https://cryptorenta.app/calculadora) y arrastra los archivos CSV. Se aceptan múltiples CSVs, se deduplican automáticamente por ID de transacción.
+
+### 3. Revisa los envíos detectados
+
+La app detecta automáticamente los envíos (Send) y los clasifica como **propio** o **tercero**. Verifica que la clasificación sea correcta:
+
+- ✅ **Wallet propia:** no se declara. No hay alteración patrimonial — DGT V0807-22.
+- ❌ **Pago a tercero:** debes marcarlo manualmente. En ese caso SÍ hay transmisión y se genera DisposalEvent.
+
+Si subes CSVs de varios exchanges, la app **correlaciona automáticamente** los Sends con los Receives usando la dirección de wallet para preservar el cost basis original.
+
+### 4. Obtén tus resultados fiscales por año
 
 La tabla de desglose por moneda está en el formato exacto de **Monedas Virtuales** de Renta Web — copia, pega y listo.
 
 ---
 
-## Cómo funciona — lógica fiscal por tipo de transacción
+## 🏦 Exchanges Soportados
+
+| Exchange | Estado | Parser |
+|----------|--------|--------|
+| Coinbase | ✅ Completo | [`src/engine/parser/coinbase.ts`](src/engine/parser/coinbase.ts) |
+| Binance | 🔜 Próximamente | ¿Quieres contribuir? [Ver guía](#cómo-añadir-soporte-para-un-nuevo-exchange) |
+| Kraken | 🔜 Próximamente | ¿Quieres contribuir? [Ver guía](#cómo-añadir-soporte-para-un-nuevo-exchange) |
+| *Tu exchange* | 📝 ¡Añádelo! | Lee cómo abajo |
+
+---
+
+## 📋 Comportamiento Fiscal por Tipo de Transacción
 
 ### Buy (Compra de crypto con EUR)
 
@@ -114,7 +147,7 @@ Movimientos internos de Coinbase entre wallet y pool de staking. Ignorados fisca
 
 ---
 
-## Transferencias cross‑exchange (cómo funciona la correlación)
+## 🔄 Transferencias cross‑exchange (cómo funciona la correlación)
 
 Cuando subes CSVs de varios exchanges, la app correlaciona automáticamente Sends y Receives para **preservar el cost basis original**.
 
@@ -144,28 +177,7 @@ Coinbase: Sell    0.5 ETH                 (ganancia calculada con coste real ✓
 
 ---
 
-## Exchanges soportados
-
-| Exchange | Estado |
-|----------|--------|
-| **Coinbase** | ✅ Completo |
-| Binance | 🔜 En desarrollo |
-| Kraken | 🔜 En desarrollo |
-
-Actualmente la app solo procesa CSVs de Coinbase. La arquitectura está diseñada para que añadir un nuevo exchange sea cuestión de escribir un parser que mapee su formato de columnas a `SanitizedTransaction`.
-
-### ¿Quieres añadir tu exchange?
-
-1. Crea un archivo en `src/engine/parser/tu-exchange.ts` que exporte una función `parse(tuExchange)CSV(csvText: string): CoinbaseRawRow[]`
-2. Añade la lógica de mapeo de columnas específicas de tu exchange
-3. Si el CSV de tu exchange incluye direcciones de wallet (`sender`/`recipient`), rellena esos campos en el raw row — así la correlación cross‑exchange funcionará con el Nivel 1 (determinista)
-4. Añade tests en `tests/engine/` y manda un PR
-
-Consulta [`PLAN.md`](PLAN.md) para ver el roadmap completo de mejoras.
-
----
-
-## Lo que NO hace (todavía)
+## ⚠️ Lo que NO hace (todavía)
 
 - ❌ No calcula la cuota tributaria (tipos progresivos 19–28 %). La app te da los importes; tú aplicas los tipos que correspondan.
 - ❌ No aplica la exención de €1,000 para pequeñas ganancias.
@@ -173,32 +185,26 @@ Consulta [`PLAN.md`](PLAN.md) para ver el roadmap completo de mejoras.
 
 ---
 
-## Privacidad
-
-**Tus datos nunca salen de tu navegador.** El CSV se procesa en local con Web Workers. La app es un sitio estático sin backend.
-
----
-
-## Desarrollo
+## 🧑‍💻 Desarrollo
 
 ```bash
 npm install
-npm run dev      # Servidor de desarrollo
-npm test         # Tests (Vitest)
+npm run dev      # Servidor de desarrollo Next.js
+npm test         # Tests con Vitest
 npm run build    # Build de producción (export estático)
 ```
 
-### Estructura
+### Estructura del proyecto
 
 ```
 src/
 ├── engine/
 │   ├── fifo/engine.ts     # Motor FIFO
 │   ├── fiscal/            # Clasificador y reportero fiscal
-│   ├── parser/            # Parser de CSV Coinbase + sanitizer
+│   ├── parser/            # Parsers de CSV + sanitizer
 │   └── worker/            # Pipeline y Web Worker
 ├── components/            # UI React
-├── lib/                   # decimal.js, helpers fiscales
+├── lib/                   # decimal.js, helpers fiscales, i18n
 └── store/                 # Zustand
 ```
 
@@ -207,9 +213,57 @@ src/
 - Todos los cálculos monetarios usan `decimal.js‑light` (precisión 40). **Nunca** usar `number` de JavaScript.
 - Los tests están en `tests/`. Ejecutar `npm test` antes de cada PR.
 - La zona horaria fiscal es `Europe/Madrid`. No modificar sin verificar el impacto en el cambio de año fiscal.
+- El código debe estar en **inglés**. La UI en español e inglés.
 
 ---
 
-## Licencia
+## 🤝 Contribuir
 
-MIT
+¡Las contribuciones son bienvenidas! Este proyecto es por y para la comunidad.
+
+### Cómo añadir soporte para un nuevo exchange
+
+El proyecto usa una arquitectura modular de parsers. Para añadir tu exchange:
+
+1. **Crea un parser:** Añade un archivo en `src/engine/parser/tu-exchange.ts` que exporte una función `parseTuExchangeCSV(csvText: string): CoinbaseRawRow[]` que mapee las columnas de tu exchange al formato interno.
+
+2. **Rellena las direcciones de wallet:** Si el CSV de tu exchange incluye direcciones (`sender`/`recipient`), rellena `senderAddress` y `recipientAddress` en el raw row — así la correlación cross‑exchange funcionará con el Nivel 1 (determinista). Si no las incluye, documéntalo como limitación y el sistema degradará automáticamente al nivel 2 (heurístico).
+
+3. **Registra el parser:** Añade tu exchange a la tabla de parsers en [`src/engine/worker/bridge-fallback.ts`](src/engine/worker/bridge-fallback.ts).
+
+4. **Añade la guía de exportación:** Crea los pasos de exportación en los archivos de traducción (`src/lib/i18n/es.json` y `en.json`).
+
+5. **Tests:** Añade tests en `tests/engine/` con un fixture CSV sintético de tu exchange.
+
+6. **Pull Request:** Envía un PR con tus cambios.
+
+### Buenas prácticas
+
+- Usa `decimal.js-light` para todos los cálculos monetarios. Nunca uses `number` de JavaScript.
+- Los tests van en `tests/` con Vitest. Ejecuta `npm test` antes de cada PR.
+- El código debe estar en **inglés**. La UI en español e inglés.
+- No añadas telemetría ni llamadas a servidor. El proyecto es 100% client‑side.
+
+### Issues abiertas para contribuir
+
+¿Quieres ayudar pero no sabes por dónde empezar? Busca issues con la etiqueta [`good first issue`](https://github.com/jpradanos00/crypto-renta/labels/good%20first%20issue).
+
+### Agradecimientos
+
+¡Gracias a todos los contribuidores que hacen este proyecto posible!
+
+---
+
+## ⚠️ Descargo de responsabilidad
+
+Esta herramienta es solo para fines informativos. No constituye asesoramiento fiscal. Consulta con un profesional para tu declaración oficial.
+
+---
+
+## 📄 Licencia
+
+MIT — Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+Hecho con ❤️ por la comunidad. [@jpradanos00](https://github.com/jpradanos00)

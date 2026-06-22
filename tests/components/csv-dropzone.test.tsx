@@ -1,14 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "../test-utils";
 import { CsvDropzone } from "@/components/csv-dropzone";
 import { useAppStore } from "@/store/app-store";
 
 describe("CsvDropzone", () => {
   beforeEach(() => {
-    useAppStore.setState(useAppStore.getInitialState ? useAppStore.getInitialState() : {
+    useAppStore.setState({
       csvFiles: [], rawTransactions: [], status: "idle", progress: { phase: "", percent: 0 },
       selectedYear: new Date().getFullYear() - 1, report: null, reports: new Map(),
       availableYears: [], fullHistory: null, errors: [],
+      sendDecisions: new Map(), pendingTransactions: [],
     });
   });
 

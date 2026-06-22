@@ -3,72 +3,72 @@
 import Link from "next/link";
 import { useState } from "react";
 import { LogIn, ExternalLink, Settings, Repeat } from "lucide-react";
-
-const steps = [
-  {
-    number: 1,
-    title: "Inicia sesión en tu cuenta de Coinbase",
-    icon: LogIn,
-    content: (
-      <p>
-        Abre tu navegador y accede a tu cuenta de Coinbase. Asegúrate de usar
-        las credenciales correctas.
-      </p>
-    ),
-  },
-  {
-    number: 2,
-    title: "Ve a Statements",
-    icon: ExternalLink,
-    content: (
-      <p>
-        Dirígete a{" "}
-        <a
-          href="https://accounts.coinbase.com/statements"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary underline"
-        >
-          accounts.coinbase.com/statements
-        </a>
-        .
-      </p>
-    ),
-  },
-  {
-    number: 3,
-    title: "Selecciona Transaction history, formato CSV, y el rango de fechas",
-    icon: Settings,
-    content: (
-      <p>
-        En la página de statements, selecciona "Transaction history". Asegúrate
-        de elegir el formato <strong>CSV</strong> y el rango de fechas
-        completo.
-      </p>
-    ),
-  },
-  {
-    number: 4,
-    title: "Descarga y repite para todos los años",
-    icon: Repeat,
-    content: (
-      <p>
-        Descarga el archivo CSV. Repite el proceso para cada año en el que
-        hayas tenido operaciones con criptomonedas.
-      </p>
-    ),
-  },
-];
+import { useT } from "@/lib/i18n/context";
 
 export default function GuiaPage() {
+  const { t } = useT();
   const [activeTab, setActiveTab] = useState<"coinbase" | "binance" | "kraken">(
     "coinbase"
   );
 
+  const steps = [
+    {
+      number: 1,
+      title: t("guia.step1Title"),
+      icon: LogIn,
+      content: (
+        <p>
+          {t("guia.step1Body")}
+        </p>
+      ),
+    },
+    {
+      number: 2,
+      title: t("guia.step2Title"),
+      icon: ExternalLink,
+      content: (
+        <p>
+          {t("guia.step2Body", { link: "" }).split("{link}")[0]}
+          <a
+            href="https://accounts.coinbase.com/statements"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            accounts.coinbase.com/statements
+          </a>
+          {t("guia.step2Body", { link: "" }).split("{link}")[1] ?? ""}
+        </p>
+      ),
+    },
+    {
+      number: 3,
+      title: t("guia.step3Title"),
+      icon: Settings,
+      content: (
+        <p>
+          {t("guia.step3Body").split('"Transaction history"')[0]}
+          &ldquo;Transaction history&rdquo;
+          {t("guia.step3Body").split('"Transaction history"')[1] ?? ""}
+        </p>
+      ),
+    },
+    {
+      number: 4,
+      title: t("guia.step4Title"),
+      icon: Repeat,
+      content: (
+        <p>
+          {t("guia.step4Body")}
+        </p>
+      ),
+    },
+  ];
+
   const tabs = [
-    { id: "coinbase" as const, label: "Coinbase" },
-    { id: "binance" as const, label: "Binance" },
-    { id: "kraken" as const, label: "Kraken" },
+    { id: "coinbase" as const, label: t("guia.tabCoinbase") },
+    { id: "binance" as const, label: t("guia.tabBinance") },
+    { id: "kraken" as const, label: t("guia.tabKraken") },
   ];
 
   return (
@@ -76,19 +76,17 @@ export default function GuiaPage() {
       <div className="mx-auto max-w-3xl space-y-12">
         <div className="space-y-4">
           <h1 className="text-3xl font-bold tracking-tight">
-            Cómo descargar tu historial de transacciones
+            {t("guia.title")}
           </h1>
           <p className="text-muted-foreground">
-            Guía paso a paso para obtener tu historial de transacciones.
+            {t("guia.subtitle")}
           </p>
         </div>
 
         <div className="rounded-lg border border-warning/30 bg-warning/10 p-4 text-sm text-warning">
-          <p className="font-medium">&#9888;&#65039; Importante</p>
+          <p className="font-medium">&#9888;&#65039; {t("guia.warningTitle")}</p>
           <p className="mt-1">
-            Procesa TODOS tus CSVs históricos de todos los exchanges para que
-            el cálculo FIFO sea correcto. Si solo subes un año, el coste de
-            adquisición podría ser incompleto.
+            {t("guia.warningBody")}
           </p>
         </div>
 
@@ -154,22 +152,21 @@ export default function GuiaPage() {
 
           {activeTab === "binance" && (
             <div className="rounded-lg border border-border bg-card p-8 text-center">
-              <p className="text-muted-foreground">Próximamente</p>
+              <p className="text-muted-foreground">{t("guia.comingSoon")}</p>
             </div>
           )}
 
           {activeTab === "kraken" && (
             <div className="rounded-lg border border-border bg-card p-8 text-center">
-              <p className="text-muted-foreground">Próximamente</p>
+              <p className="text-muted-foreground">{t("guia.comingSoon")}</p>
             </div>
           )}
         </div>
 
         <div className="space-y-4 rounded-lg border border-border bg-card p-4">
-          <h2 className="font-medium">Formatos compatibles</h2>
+          <h2 className="font-medium">{t("guia.compatibleFormats")}</h2>
           <p className="text-sm text-muted-foreground">
-            Actualmente compatible con CSV de Coinbase. Próximamente: Binance,
-            Kraken.
+            {t("guia.compatibleFormatsDesc")}
           </p>
         </div>
 
@@ -178,7 +175,7 @@ export default function GuiaPage() {
             href="/calculadora"
             className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
           >
-            Ir a la Calculadora &rarr;
+            {t("guia.cta")} &rarr;
           </Link>
         </div>
       </div>

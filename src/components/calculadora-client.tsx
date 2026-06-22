@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { generateUUID } from "@/lib/uuid";
 import { prepareCSVs, processCSVsInMainThread } from "@/engine/worker/bridge-fallback";
 import { CsvDropzone } from "@/components/csv-dropzone";
@@ -16,6 +17,7 @@ import { Calculator, RotateCcw, Shield, ArrowRight, Eye } from "lucide-react";
 import type { DisposalEvent, IncomeEvent } from "@/engine/types";
 
 export function CalculadoraClient() {
+  const { t } = useT();
   const csvFiles = useAppStore((s) => s.csvFiles);
   const status = useAppStore((s) => s.status);
   const setStatus = useAppStore((s) => s.setStatus);
@@ -95,14 +97,13 @@ export function CalculadoraClient() {
     <div className="space-y-10">
       {/* ── Upload ── */}
       {(!isDone && !isCalculating && !isReviewing) && (
-        <section aria-label="Importar archivos CSV" className="space-y-6">
+        <section aria-label={t("dropzone.sectionLabel")} className="space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-              Declara tus criptomonedas sin sorpresas
+              {t("calculator.heroTitle")}
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-              Sube los CSV de Coinbase. El motor FIFO calcula tus ganancias y
-              pérdidas patrimoniales según la normativa de la AEAT.
+              {t("calculator.heroSubtitle")}
             </p>
           </div>
 
@@ -110,7 +111,7 @@ export function CalculadoraClient() {
             <div className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1">
               <Shield className="h-3.5 w-3.5 text-gain" />
               <span className="text-xs font-medium text-gain">
-                SPA · Zero Knowledge · Tus datos nunca salen de tu dispositivo
+                {t("calculator.privacyBadge")}
               </span>
             </div>
           </div>
@@ -133,8 +134,7 @@ export function CalculadoraClient() {
                            active:scale-[0.99]"
               >
                 <Eye className="h-4 w-4" />
-                Revisar transacciones · {csvFiles.length}{" "}
-                {csvFiles.length === 1 ? "archivo" : "archivos"}
+                {t("calculator.reviewBtn", { count: csvFiles.length })}
               </button>
             </div>
           )}
@@ -152,7 +152,7 @@ export function CalculadoraClient() {
               onClick={handleReset}
               className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
             >
-              ⬅ Volver
+              &#11013; {t("calculator.goBack")}
             </button>
             <button
               type="button"
@@ -167,7 +167,7 @@ export function CalculadoraClient() {
                          active:scale-[0.99]"
             >
               <Calculator className="h-4 w-4" />
-              Calcular IRPF
+              {t("calculator.calculateBtn")}
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -192,9 +192,9 @@ export function CalculadoraClient() {
             <svg className="h-6 w-6 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-destructive">Error al procesar</p>
+            <p className="text-sm font-semibold text-destructive">{t("calculator.errorTitle")}</p>
             <p className="mt-1 text-xs text-destructive/60">
-              Ha ocurrido un error durante el cálculo. Revisa los datos e inténtalo de nuevo.
+              {t("calculator.errorBody")}
             </p>
           </div>
           <button
@@ -204,7 +204,7 @@ export function CalculadoraClient() {
                        transition-colors hover:bg-destructive/20
                        focus:outline-none focus:ring-2 focus:ring-destructive"
           >
-            Intentar de nuevo
+            {t("calculator.errorRetry")}
           </button>
         </div>
       )}
@@ -214,9 +214,9 @@ export function CalculadoraClient() {
         <div className="space-y-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-foreground">Resultados fiscales</h2>
+              <h2 className="text-lg font-bold text-foreground">{t("calculator.resultsTitle")}</h2>
               <p className="text-sm text-muted-foreground">
-                Traslada estos importes a Renta Web. Hacienda aplica los porcentajes.
+                {t("calculator.resultsSubtitle")}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -227,7 +227,7 @@ export function CalculadoraClient() {
                 className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                Volver a empezar
+                {t("calculator.resetBtn")}
               </button>
             </div>
           </div>

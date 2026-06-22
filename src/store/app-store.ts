@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { Locale } from "@/lib/i18n/types";
 import type {
   CoinbaseRawRow,
   CsvFileEntry,
@@ -26,6 +27,7 @@ interface AppState {
   errors: AppError[];
   sendDecisions: Map<string, "own" | "third-party">;
   pendingTransactions: SanitizedTransaction[];
+  locale: Locale;
 
   // Actions
   addCsvFile: (file: CsvFileEntry) => void;
@@ -42,6 +44,7 @@ interface AppState {
   toggleSendDecision: (txId: string) => void;
   setSendDecisions: (decisions: Map<string, "own" | "third-party">) => void;
   setPendingTransactions: (txs: SanitizedTransaction[]) => void;
+  setLocale: (locale: Locale) => void;
   reset: () => void;
 }
 
@@ -58,6 +61,7 @@ export const useAppStore = create<AppState>((set) => ({
   errors: [],
   sendDecisions: new Map(),
   pendingTransactions: [],
+  locale: "es",
 
   addCsvFile: (file) =>
     set((state) => ({ csvFiles: [...state.csvFiles, file] })),
@@ -101,6 +105,8 @@ export const useAppStore = create<AppState>((set) => ({
 
   setPendingTransactions: (pendingTransactions) => set({ pendingTransactions }),
 
+  setLocale: (locale) => set({ locale }),
+
   reset: () =>
     set({
       csvFiles: [],
@@ -114,5 +120,6 @@ export const useAppStore = create<AppState>((set) => ({
       errors: [],
       sendDecisions: new Map(),
       pendingTransactions: [],
+      locale: "es",
     }),
 }));

@@ -1,10 +1,12 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { formatEUR } from "@/lib/decimal";
 import { Send, ArrowDownToLine } from "lucide-react";
 
 export function ReviewScreen() {
+  const { t, locale } = useT();
   const pendingTransactions = useAppStore((s) => s.pendingTransactions);
   const sendDecisions = useAppStore((s) => s.sendDecisions);
   const toggleSendDecision = useAppStore((s) => s.toggleSendDecision);
@@ -18,7 +20,7 @@ export function ReviewScreen() {
   );
 
   const formatDate = (d: Date) =>
-    d.toLocaleDateString("es-ES", {
+    d.toLocaleDateString(locale === "en" ? "en-US" : "es-ES", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -30,12 +32,15 @@ export function ReviewScreen() {
     <section className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-          Revisa antes de calcular
+          {t("review.title")}
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-          Se han detectado {sends.length} envío{sends.length === 1 ? "" : "s"} y{" "}
-          {unmatchedReceives.length} recepción{unmatchedReceives.length === 1 ? "" : "es"}{" "}
-          que necesitan tu confirmación.
+          {t("review.subtitle", {
+            sends: sends.length,
+            sendsPlural: sends.length === 1 ? "" : "s",
+            receives: unmatchedReceives.length,
+            receivesPlural: unmatchedReceives.length === 1 ? "" : "es",
+          })}
         </p>
       </div>
 
@@ -45,18 +50,22 @@ export function ReviewScreen() {
           <div className="flex items-center gap-2.5 border-b border-border bg-muted px-5 py-3.5">
             <Send className="h-4 w-4 text-amber-400" />
             <span className="text-sm font-semibold">
-              {sends.length} envío{sends.length === 1 ? "" : "s"} pendiente{sends.length === 1 ? "" : "s"} de clasificar
+              {t("review.sendHeader", {
+                count: sends.length,
+                countPlural: sends.length === 1 ? "" : "s",
+                countPlural2: sends.length === 1 ? "" : "s",
+              })}
             </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
-                  <th scope="col" className="px-4 py-2.5 text-left font-medium">Fecha</th>
-                  <th scope="col" className="px-4 py-2.5 text-left font-medium">Activo</th>
-                  <th scope="col" className="px-4 py-2.5 text-right font-medium">Cantidad</th>
-                  <th scope="col" className="px-4 py-2.5 text-right font-medium">Valor mercado</th>
-                  <th scope="col" className="px-4 py-2.5 text-center font-medium">¿Destino?</th>
+                  <th scope="col" className="px-4 py-2.5 text-left font-medium">{t("review.colDate")}</th>
+                  <th scope="col" className="px-4 py-2.5 text-left font-medium">{t("review.colAsset")}</th>
+                  <th scope="col" className="px-4 py-2.5 text-right font-medium">{t("review.colQuantity")}</th>
+                  <th scope="col" className="px-4 py-2.5 text-right font-medium">{t("review.colMarketValue")}</th>
+                  <th scope="col" className="px-4 py-2.5 text-center font-medium">{t("review.colDestination")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -83,11 +92,11 @@ export function ReviewScreen() {
                         }`}
                         title={
                           sendDecisions.get(tx.id) === "third-party"
-                            ? "Pago a tercero — genera ganancia/pérdida"
-                            : "Wallet propia — no genera hecho imponible"
+                            ? t("review.thirdPartyTooltip")
+                            : t("review.ownTooltip")
                         }
                       >
-                        {sendDecisions.get(tx.id) === "third-party" ? "Tercero" : "Propia"}
+                        {sendDecisions.get(tx.id) === "third-party" ? t("review.thirdParty") : t("review.own")}
                       </button>
                     </td>
                   </tr>
@@ -104,28 +113,27 @@ export function ReviewScreen() {
           <div className="flex items-center gap-2.5 border-b border-border bg-muted px-5 py-3.5">
             <ArrowDownToLine className="h-4 w-4 text-indigo-400" />
             <span className="text-sm font-semibold">
-              {unmatchedReceives.length} recepción{unmatchedReceives.length === 1 ? "" : "es"} sin origen conocido
+              {t("review.unmatchedHeader", {
+                count: unmatchedReceives.length,
+                countPlural: unmatchedReceives.length === 1 ? "" : "es",
+              })}
             </span>
           </div>
           <div className="p-5 space-y-3">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Estas recepciones no pudieron correlarse con ninguna transferencia
-              de origen. Su coste de adquisición usará el <strong>precio de mercado</strong> en
-              el momento de recepción.
+              {t("review.unmatchedDesc1")}
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Si este activo proviene de <strong>otro exchange</strong> o wallet,
-              súbelo también como CSV para que la app pueda preservar el coste
-              de adquisición real mediante correlación automática.
+              {t("review.unmatchedDesc2")}
             </p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th scope="col" className="px-4 py-2.5 text-left font-medium">Fecha</th>
-                    <th scope="col" className="px-4 py-2.5 text-left font-medium">Activo</th>
-                    <th scope="col" className="px-4 py-2.5 text-right font-medium">Cantidad</th>
-                    <th scope="col" className="px-4 py-2.5 text-right font-medium">Valor mercado</th>
+                    <th scope="col" className="px-4 py-2.5 text-left font-medium">{t("review.colDate")}</th>
+                    <th scope="col" className="px-4 py-2.5 text-left font-medium">{t("review.colAsset")}</th>
+                    <th scope="col" className="px-4 py-2.5 text-right font-medium">{t("review.colQuantity")}</th>
+                    <th scope="col" className="px-4 py-2.5 text-right font-medium">{t("review.colMarketValue")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

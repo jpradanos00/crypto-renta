@@ -2,9 +2,10 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useAppStore } from "@/store/app-store";
+import { useT } from "@/lib/i18n/context";
 import { generateUUID } from "@/lib/uuid";
 import type { CsvFileEntry } from "@/engine/types";
-import { Upload, FileText, X, ChevronDown, HelpCircle, ExternalLink } from "lucide-react";
+import { Upload, FileText, X, ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 
 interface GuideEntry {
   label: string;
@@ -13,19 +14,10 @@ interface GuideEntry {
   linkLabel: string;
 }
 
-const COINBASE_GUIDE: GuideEntry = {
-  label: "Coinbase",
-  link: "https://accounts.coinbase.com/statements",
-  linkLabel: "Ir a Extractos de Coinbase",
-  steps: [
-    { text: "Inicia sesión en coinbase.com desde un ordenador" },
-    { text: "Ve a Perfil → Extractos e informes" },
-    { text: 'Genera un "Historial de transacciones" en CSV', sub: "Rango: todo el historial" },
-    { text: "Asegúrate de que la moneda base es EUR", sub: "Imprescindible para el IRPF español" },
-  ],
-};
+const COINBASE_GUIDE_LINK = "https://accounts.coinbase.com/statements";
 
 export function CsvDropzone() {
+  const { t } = useT();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
@@ -33,6 +25,18 @@ export function CsvDropzone() {
   const csvFiles = useAppStore((s) => s.csvFiles);
   const addCsvFile = useAppStore((s) => s.addCsvFile);
   const removeCsvFile = useAppStore((s) => s.removeCsvFile);
+
+  const guide: GuideEntry = {
+    label: t("dropzone.badgeCoinbase"),
+    link: COINBASE_GUIDE_LINK,
+    linkLabel: t("dropzone.guideLink"),
+    steps: [
+      { text: t("dropzone.guideStep1") },
+      { text: t("dropzone.guideStep2") },
+      { text: t("dropzone.guideStep3"), sub: t("dropzone.guideStep3Sub") },
+      { text: t("dropzone.guideStep4"), sub: t("dropzone.guideStep4Sub") },
+    ],
+  };
 
   const getFileSignature = (name: string, size: number): string =>
     `${name}|${size}`;
@@ -45,7 +49,6 @@ export function CsvDropzone() {
       );
       if (!droppedFiles.length) return;
 
-      // Comprobar duplicados contra los archivos YA en el store
       const existingSigs = new Set(
         csvFiles.map((f) => getFileSignature(f.name, f.size))
       );
@@ -53,7 +56,7 @@ export function CsvDropzone() {
       for (const file of droppedFiles) {
         const sig = getFileSignature(file.name, file.size);
         if (existingSigs.has(sig)) {
-          setDuplicateWarning(`"${file.name}" ya ha sido añadido.`);
+          setDuplicateWarning(t("dropzone.duplicateWarning", { name: file.name }));
           setTimeout(() => setDuplicateWarning(null), 3000);
           return;
         }
@@ -73,7 +76,7 @@ export function CsvDropzone() {
         reader.readAsText(file);
       }
     },
-    [csvFiles, addCsvFile]
+    [csvFiles, addCsvFile, t]
   );
 
   const onDragOver = useCallback((e: React.DragEvent) => {
@@ -112,15 +115,15 @@ export function CsvDropzone() {
   };
 
   return (
-    <section aria-label="Importar archivos CSV" className="space-y-4">
+    <section aria-label={t("dropzone.sectionLabel")} className="space-y-4">
       {/* Top bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Sube tus archivos CSV del exchange
+            {t("dropzone.uploadCsvs")}
           </p>
-          <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-medium text-indigo-300">
-            Compatible con Coinbase
+          <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[11px] font-medium text-indigo-300">
+            {t("dropzone.badgeCoinbase")}
           </span>
         </div>
         <button
@@ -130,8 +133,8 @@ export function CsvDropzone() {
           className="flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
         >
           <HelpCircle className="h-3.5 w-3.5" />
-          ¿No sabes cómo descargar tu CSV?
-          {guideOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5 rotate-180" />}
+          {t("dropzone.helpBtn")}
+          {guideOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
         </button>
       </div>
 
@@ -139,11 +142,11 @@ export function CsvDropzone() {
       {guideOpen && (
         <div className="overflow-hidden rounded-xl border border-border bg-card shadow-lg">
           <div className="border-b border-border bg-muted px-5 py-4">
-            <p className="text-sm font-semibold">Cómo exportar tu CSV de Coinbase</p>
+            <p className="text-sm font-semibold">{t("dropzone.guideTitle")}</p>
           </div>
           <div className="space-y-4 p-5">
             <ol className="space-y-3">
-              {COINBASE_GUIDE.steps.map((step, i) => (
+              {guide.steps.map((step, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-[11px] font-bold text-indigo-400">
                     {i + 1}
@@ -156,13 +159,12 @@ export function CsvDropzone() {
               ))}
             </ol>
             <a
-              href={COINBASE_GUIDE.link}
+              href={guide.link}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-400 transition-colors hover:text-indigo-300"
             >
-              {COINBASE_GUIDE.linkLabel}
-              <ExternalLink className="h-3 w-3" />
+              {guide.linkLabel}
             </a>
           </div>
         </div>
@@ -186,14 +188,14 @@ export function CsvDropzone() {
         onDrop={onDrop}
         className={`
           group relative flex cursor-pointer flex-col items-center justify-center
-          gap-5 overflow-hidden rounded-2xl border-2 border-dashed p-14
+          gap-5 overflow-hidden rounded-2xl border-2 border-dashed p-6 sm:p-10 lg:p-14
           text-center transition-all duration-300
           ${isDragging
             ? "border-indigo-500 bg-indigo-500/5"
             : "border-border bg-card/50 hover:border-primary hover:bg-card"
           }
         `}
-        aria-label="Zona de carga. Haz clic o arrastra archivos CSV aquí."
+        aria-label={t("dropzone.dropAriaLabel")}
       >
         <div className={`
           pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300
@@ -235,14 +237,14 @@ export function CsvDropzone() {
           <p className={`text-base font-semibold transition-colors ${
             isDragging ? "text-indigo-300" : "text-foreground"
           }`}>
-            {isDragging ? "Suelta los archivos aquí" : "Arrastra tus CSV aquí"}
+            {isDragging ? t("dropzone.dropActive") : t("dropzone.dropIdle")}
           </p>
           <p className="text-sm text-muted-foreground">
-            o haz clic para explorar · Múltiples archivos permitidos
+            {t("dropzone.dropHint")}
           </p>
         </div>
 
-        <span className="relative text-xs text-muted-foreground">Solo archivos .csv</span>
+        <span className="relative text-xs text-muted-foreground">{t("dropzone.dropOnlyCsv")}</span>
       </div>
 
       {/* File list */}
@@ -250,19 +252,18 @@ export function CsvDropzone() {
         <>
           <div className="rounded-xl border border-warning/20 bg-warning/5 px-4 py-3">
             <p className="flex items-start gap-2 text-xs text-warning">
-              <span className="mt-0.5 shrink-0">⚠</span>
+              <span className="mt-0.5 shrink-0">&#9888;</span>
               <span>
-                <strong>Sube todo tu historial desde que abriste la cuenta,</strong>{" "}
-                no solo del año fiscal. El método FIFO necesita conocer todas tus compras anteriores.
+                {t("dropzone.historyWarning")}
               </span>
             </p>
           </div>
 
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Archivos listos · {csvFiles.length}
+              {t("dropzone.filesReady", { count: csvFiles.length })}
             </p>
-            <ul aria-label="Archivos a procesar" className="space-y-2">
+            <ul aria-label={t("dropzone.filesToProcess")} className="space-y-2">
               {csvFiles.map((file) => (
                 <li
                   key={file.id}
@@ -281,7 +282,7 @@ export function CsvDropzone() {
                   <button
                     type="button"
                     onClick={() => removeCsvFile(file.id)}
-                    aria-label={`Eliminar ${file.name}`}
+                    aria-label={t("dropzone.removeFile", { name: file.name })}
                     className="shrink-0 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   >
                     <X className="h-3.5 w-3.5" aria-hidden />
