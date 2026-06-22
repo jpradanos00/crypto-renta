@@ -27,6 +27,25 @@
 
 ---
 
+## 🤖 Vibecoding con IA
+
+CryptoRenta ha sido desarrollado en un **~95% con inteligencia artificial** usando [OpenCode](https://github.com/anomalyco/opencode) — un asistente de IA autónomo.
+
+El workflow de desarrollo ha sido radicalmente distinto al tradicional:
+
+- **1 humano** (dirección, diseño de arquitectura, revisión de PRs)
+- **Múltiples agentes y subagentes de IA** trabajando en paralelo como un equipo de ingenieros
+- **97 tests pasando**, tipado estricto TypeScript, código inglés, UI bilingüe
+- **Cada commit** es revisado por un agente distinto al que lo escribió
+
+> *"Programar ya no es picar teclas. Es orquestar agentes."*
+
+Este proyecto es una prueba viviente de que el futuro del software open source pasa por combinar talento humano con agentes de IA. Si te interesa esta forma de desarrollar, el código está abierto para que veas exactamente cómo se ha hecho.
+
+El rol humano ha sido clave en: definición de la normativa fiscal española, diseño de la arquitectura multi-exchange, decision de algoritmo (TransferLedger, FIFO), y revisión fiscal de cada cambio.
+
+---
+
 ## 🚀 Cómo usar
 
 ### 1. Exporta tu historial de transacciones
@@ -180,7 +199,6 @@ Coinbase: Sell    0.5 ETH                 (ganancia calculada con coste real ✓
 ## ⚠️ Lo que NO hace (todavía)
 
 - ❌ No calcula la cuota tributaria (tipos progresivos 19–28 %). La app te da los importes; tú aplicas los tipos que correspondan.
-- ❌ No aplica la exención de €1,000 para pequeñas ganancias.
 - ❌ No genera el borrador de Renta Web — solo el desglose por moneda.
 
 ---
@@ -263,25 +281,6 @@ Esta herramienta es solo para fines informativos. No constituye asesoramiento fi
 ## 📄 Licencia
 
 MIT — Consulta el archivo [LICENSE](LICENSE) para más detalles.
-
----
-
-## 🤖 Vibecoding con IA
-
-CryptoRenta ha sido desarrollado en un **~95% con inteligencia artificial** usando [OpenCode](https://github.com/anomalyco/opencode) — un agente de codificación autónomo de nueva generación.
-
-El workflow de desarrollo ha sido radicalmente distinto al tradicional:
-
-- **1 humano** (dirección, diseño de arquitectura, revisión de PRs)
-- **Múltiples agentes y subagentes de IA** trabajando en paralelo como un equipo de ingenieros
-- **97 tests pasando**, tipado estricto TypeScript, código inglés, UI bilingüe
-- **Cada commit** es revisado por un agente distinto al que lo escribió
-
-> *"Programar ya no es picar teclas. Es orquestar agentes."*
-
-Este proyecto es una prueba viviente de que el futuro del software open source pasa por combinar talento humano con agentes de IA. Si te interesa esta forma de desarrollar, el código está abierto para que veas exactamente cómo se ha hecho.
-
-El rol humano ha sido clave en: definición de la normativa fiscal española, diseño de la arquitectura multi-exchange, decision de algoritmo (TransferLedger, FIFO), y revisión fiscal de cada cambio.
 
 ---
 
