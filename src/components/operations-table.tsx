@@ -167,7 +167,7 @@ export function OperationsTable() {
             </div>
           )}
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[720px] text-sm">
               <caption className="sr-only">{t("operations.tableCaption")}</caption>
               <thead className="bg-muted">
                 <tr>

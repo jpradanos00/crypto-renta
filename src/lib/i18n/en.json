@@ -55,7 +55,7 @@
     "heroTitle": "Declare your crypto with confidence",
     "heroSubtitle": "Upload your exchange CSVs. The FIFO engine calculates your capital gains and losses according to AEAT regulations.",
     "privacyBadge": "SPA · Zero Knowledge · Your data never leaves your device",
-    "reviewBtn": "Review transactions · {count} {count, plural, one {file} other {files}}",
+    "reviewBtn": "Review transactions · {count} {filesWord}",
     "goBack": "Back",
     "calculateBtn": "Calculate IRPF",
     "errorTitle": "Processing Error",
@@ -236,6 +236,18 @@
   "common": {
     "close": "Close",
     "loading": "Loading...",
-    "error": "Error"
+    "error": "Error",
+    "file_singular": "file",
+    "file_plural": "files",
+    "send_singular": "send",
+    "send_plural": "sends",
+    "receive_singular": "receive",
+    "receive_plural": "receives",
+    "warning_singular": "warning",
+    "warning_plural": "warnings",
+    "detected_singular": "detected",
+    "detected_plural": "detected",
+    "pending_singular": "pending",
+    "pending_plural": "pending"
   }
 }

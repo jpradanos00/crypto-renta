@@ -55,7 +55,7 @@
     "heroTitle": "Declara tus criptomonedas sin sorpresas",
     "heroSubtitle": "Sube los CSV de tu exchange. El motor FIFO calcula tus ganancias y pérdidas patrimoniales según la normativa de la AEAT.",
     "privacyBadge": "SPA · Zero Knowledge · Tus datos nunca salen de tu dispositivo",
-    "reviewBtn": "Revisar transacciones · {count} {count, plural, one {archivo} other {archivos}}",
+    "reviewBtn": "Revisar transacciones · {count} {filesWord}",
     "goBack": "Volver",
     "calculateBtn": "Calcular IRPF",
     "errorTitle": "Error al procesar",
@@ -236,6 +236,18 @@
   "common": {
     "close": "Cerrar",
     "loading": "Cargando...",
-    "error": "Error"
+    "error": "Error",
+    "file_singular": "archivo",
+    "file_plural": "archivos",
+    "send_singular": "envío",
+    "send_plural": "envíos",
+    "receive_singular": "recepción",
+    "receive_plural": "recepciones",
+    "warning_singular": "advertencia",
+    "warning_plural": "advertencias",
+    "detected_singular": "detectada",
+    "detected_plural": "detectadas",
+    "pending_singular": "pendiente",
+    "pending_plural": "pendientes"
   }
 }

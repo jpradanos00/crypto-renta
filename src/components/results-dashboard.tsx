@@ -116,7 +116,7 @@ export function ResultsDashboard() {
         />
       </div>
 
-      <div className="border-l-4 border-primary rounded-xl space-y-6">
+      <div className="space-y-6">
         {/* Neto detallado Cubo 1 */}
         <div className="rounded-xl border border-border bg-card p-5">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">

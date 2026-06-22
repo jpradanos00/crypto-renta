@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { LogIn, ExternalLink, Settings, Repeat } from "lucide-react";
+import { LogIn, ExternalLink, FileText, Repeat } from "lucide-react";
 import { useT } from "@/lib/i18n/context";
 
 export default function GuiaPage() {
@@ -44,7 +44,7 @@ export default function GuiaPage() {
     {
       number: 3,
       title: t("guia.step3Title"),
-      icon: Settings,
+      icon: FileText,
       content: (
         <p>
           {t("guia.step3Body").split('"Transaction history"')[0]}

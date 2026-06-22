@@ -54,7 +54,7 @@ export function AssetBreakdownTable({
 
       {/* Table */}
       <div className="overflow-x-auto -mx-5 px-5">
-        <table className="w-full text-sm" role="table" aria-label="Desglose por activo para Renta Web">
+        <table className="w-full min-w-[640px] text-sm" role="table" aria-label="Desglose por activo para Renta Web">
           <thead>
             <tr className="border-b border-border text-left text-xs text-muted-foreground uppercase tracking-wider">
               <th scope="col" className="pb-2 pr-4 font-medium">{t("assetBreakdown.colAsset")}</th>

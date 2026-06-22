@@ -134,7 +134,10 @@ export function CalculadoraClient() {
                            active:scale-[0.99]"
               >
                 <Eye className="h-4 w-4" />
-                {t("calculator.reviewBtn", { count: csvFiles.length })}
+                {t("calculator.reviewBtn", {
+                  count: csvFiles.length,
+                  filesWord: csvFiles.length === 1 ? t("common.file_singular") : t("common.file_plural"),
+                })}
               </button>
             </div>
           )}
@@ -212,14 +215,14 @@ export function CalculadoraClient() {
       {/* ── Results ── */}
       {isDone && (
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h2 className="text-lg font-bold text-foreground">{t("calculator.resultsTitle")}</h2>
               <p className="text-sm text-muted-foreground">
                 {t("calculator.resultsSubtitle")}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <YearSelector />
               <button
                 type="button"

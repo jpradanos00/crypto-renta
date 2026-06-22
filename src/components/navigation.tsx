@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/theme-provider";
 import { useT } from "@/lib/i18n/context";
-import { Sun, Moon, Monitor, Globe } from "lucide-react";
+import { Sun, Moon, Monitor, Globe, Menu, X } from "lucide-react";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -26,7 +27,7 @@ function ThemeToggle() {
     <button
       onClick={cycleTheme}
       title={t("nav.changeTheme", { theme: getLabel() })}
-      className="ml-2 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+      className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
       aria-label={t("nav.changeTheme", { theme: getLabel() })}
     >
       {theme === "light" ? (
@@ -51,7 +52,7 @@ function LangToggle() {
     <button
       onClick={cycleLocale}
       title={locale === "es" ? "Switch to English" : "Cambiar a español"}
-      className="ml-2 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+      className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
       aria-label={locale === "es" ? "Switch to English" : "Cambiar a español"}
     >
       <Globe className="h-5 w-5" />
@@ -61,6 +62,7 @@ function LangToggle() {
 }
 
 export function Navigation() {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useT();
 
@@ -72,16 +74,18 @@ export function Navigation() {
 
   return (
     <nav
-      className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"
+      className="relative mx-auto flex max-w-5xl items-center justify-between px-4 py-3"
       aria-label={t("nav.mainNav")}
     >
       <Link
         href="/"
-        className="text-lg font-bold tracking-tight focus:outline-none focus:ring-2 focus:ring-ring rounded-md px-1 py-0.5"
+        className="text-lg font-bold tracking-tight focus:outline-none focus:ring-2 focus:ring-ring rounded-md px-1 py-0.5 shrink-0"
       >
         CryptoRenta
       </Link>
-      <ul className="flex items-center gap-6">
+
+      {/* Desktop links */}
+      <ul className="hidden sm:flex items-center gap-4 md:gap-6">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           return (
@@ -102,10 +106,54 @@ export function Navigation() {
           );
         })}
       </ul>
-      <div className="flex items-center">
+
+      {/* Desktop toggles */}
+      <div className="hidden sm:flex items-center gap-1">
         <LangToggle />
         <ThemeToggle />
       </div>
+
+      {/* Mobile menu button + toggles */}
+      <div className="flex sm:hidden items-center gap-1">
+        <LangToggle />
+        <ThemeToggle />
+        <button
+          onClick={() => setMobileOpen((v) => !v)}
+          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+          aria-label={mobileOpen ? t("common.close") : "Menu"}
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile menu dropdown */}
+      {mobileOpen && (
+        <div className="absolute top-full left-0 right-0 z-40 border-b border-border bg-background/95 backdrop-blur sm:hidden">
+          <ul className="flex flex-col px-4 py-4 gap-1">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={[
+                      "block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ].join(" ")}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }
