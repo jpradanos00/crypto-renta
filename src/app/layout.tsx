@@ -92,6 +92,11 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("cryptorenta-theme");if(t==="light")document.documentElement.classList.add("light");else if(t==="dark")document.documentElement.classList.add("dark");else{var m=window.matchMedia("(prefers-color-scheme: dark)");document.documentElement.classList.add(m.matches?"dark":"light")}}catch(e){}})();`,
+          }}
+        />
         <link
           rel="preconnect"
           href="https://github.com"

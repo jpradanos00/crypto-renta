@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useLayoutEffect, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";
 
@@ -15,9 +15,16 @@ const ThemeProviderContext = createContext<ThemeProviderState>({
 });
 
 export function ThemeProvider({ children }: React.PropsWithChildren) {
-  const [theme, setThemeState] = useState<Theme>("system");
+  const [theme, setThemeState] = useState<Theme>(() => {
+    // Read the class already applied by the blocking <script> in <head>
+    if (typeof document !== "undefined") {
+      if (document.documentElement.classList.contains("light")) return "light";
+      if (document.documentElement.classList.contains("dark")) return "dark";
+    }
+    return "system";
+  });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stored = localStorage.getItem("cryptorenta-theme") as Theme | null;
     if (stored) {
       setThemeState(stored);

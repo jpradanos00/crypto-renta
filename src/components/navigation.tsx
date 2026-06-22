@@ -31,11 +31,11 @@ function ThemeToggle() {
       aria-label={t("nav.changeTheme", { theme: getLabel() })}
     >
       {theme === "light" ? (
-        <Sun className="h-5 w-5" />
+        <Sun className="h-5 w-5" suppressHydrationWarning />
       ) : theme === "dark" ? (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-5 w-5" suppressHydrationWarning />
       ) : (
-        <Monitor className="h-5 w-5" />
+        <Monitor className="h-5 w-5" suppressHydrationWarning />
       )}
     </button>
   );
@@ -55,7 +55,7 @@ function LangToggle() {
       className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
       aria-label={locale === "es" ? "Switch to English" : "Cambiar a español"}
     >
-      <Globe className="h-5 w-5" />
+      <Globe className="h-5 w-5" suppressHydrationWarning />
       <span className="text-[11px] font-bold leading-none">{locale === "es" ? "ES" : "EN"}</span>
     </button>
   );
@@ -123,7 +123,7 @@ export function Navigation() {
           aria-label={mobileOpen ? t("common.close") : "Menu"}
           aria-expanded={mobileOpen}
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? <X className="h-5 w-5" suppressHydrationWarning /> : <Menu className="h-5 w-5" suppressHydrationWarning />}
         </button>
       </div>
 
