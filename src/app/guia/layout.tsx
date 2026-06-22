@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Coinbase transaction history CSV español",
   ],
   alternates: {
-    canonical: "https://cryptorenta.app/guia",
+    canonical: "https://jpradanos00.github.io/crypto-renta/guia",
   },
   openGraph: {
     title:
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
       "Guía paso a paso para descargar tu historial de transacciones de Coinbase, Binance y Kraken para el IRPF español.",
     type: "website",
     locale: "es_ES",
-    url: "https://cryptorenta.app/guia",
+    url: "https://jpradanos00.github.io/crypto-renta/guia",
   },
   twitter: {
     card: "summary_large_image",

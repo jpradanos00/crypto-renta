@@ -2,23 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://cryptorenta.app/</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cryptorenta.app/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cryptorenta.app/?lang=en"/>
+    <loc>https://jpradanos00.github.io/crypto-renta/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jpradanos00.github.io/crypto-renta/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jpradanos00.github.io/crypto-renta/?lang=en"/>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://cryptorenta.app/calculadora</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cryptorenta.app/calculadora"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cryptorenta.app/calculadora?lang=en"/>
+    <loc>https://jpradanos00.github.io/crypto-renta/calculadora</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jpradanos00.github.io/crypto-renta/calculadora"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jpradanos00.github.io/crypto-renta/calculadora?lang=en"/>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://cryptorenta.app/guia</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cryptorenta.app/guia"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cryptorenta.app/guia?lang=en"/>
+    <loc>https://jpradanos00.github.io/crypto-renta/guia</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://jpradanos00.github.io/crypto-renta/guia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jpradanos00.github.io/crypto-renta/guia?lang=en"/>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

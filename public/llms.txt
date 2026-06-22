@@ -4,9 +4,9 @@
 Comprehensive FIFO-based crypto tax calculator. 100% client-side zero-knowledge architecture. No registration, no server, no tracking. Open source alternative to Koinly and Cointracker for Spanish taxpayers.
 
 ## Docs
-- Home: https://cryptorenta.app
-- Calculator: https://cryptorenta.app/calculadora
-- How to export CSVs: https://cryptorenta.app/guia
+- Home: https://jpradanos00.github.io/crypto-renta
+- Calculator: https://jpradanos00.github.io/crypto-renta/calculadora
+- How to export CSVs: https://jpradanos00.github.io/crypto-renta/guia
 
 ## Features
 - Upload exchange CSVs (Coinbase supported, Binance & Kraken coming soon)

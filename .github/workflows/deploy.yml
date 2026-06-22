@@ -30,6 +30,8 @@ jobs:
       - run: npm test
 
       - run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /crypto-renta
 
       - uses: actions/configure-pages@v4
 

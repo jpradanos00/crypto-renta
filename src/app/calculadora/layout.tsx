@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "impuestos bitcoin españa calculadora",
   ],
   alternates: {
-    canonical: "https://cryptorenta.app/calculadora",
+    canonical: "https://jpradanos00.github.io/crypto-renta/calculadora",
   },
   openGraph: {
     title:
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       "Calcula tus impuestos de criptomonedas para el IRPF español subiendo tus CSVs. 100% privado, sin registro, open source.",
     type: "website",
     locale: "es_ES",
-    url: "https://cryptorenta.app/calculadora",
+    url: "https://jpradanos00.github.io/crypto-renta/calculadora",
   },
   twitter: {
     card: "summary_large_image",
@@ -32,6 +32,7 @@ export const metadata: Metadata = {
       "Calculadora IRPF Criptomonedas - Sube tu CSV Gratis | CryptoRenta",
     description:
       "Calcula tus impuestos de criptomonedas para el IRPF español subiendo tus CSVs. 100% privado, sin registro.",
+    images: ["https://jpradanos00.github.io/crypto-renta/og-image.png"],
   },
 };
 

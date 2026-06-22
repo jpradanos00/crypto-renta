@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cryptorenta.app/sitemap.xml
+Sitemap: https://jpradanos00.github.io/crypto-renta/sitemap.xml

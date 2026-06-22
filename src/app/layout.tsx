@@ -3,7 +3,9 @@ import "@/styles/globals.css";
 import { I18nClientLayout } from "@/components/i18n-client-layout";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cryptorenta.app"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://jpradanos00.github.io/crypto-renta"
+  ),
   title:
     "CryptoRenta - Calculadora Impuestos Criptomonedas IRPF España | Gratis y Privada",
   description:
@@ -29,10 +31,10 @@ export const metadata: Metadata = {
     "open source crypto tax calculator",
   ],
   alternates: {
-    canonical: "https://cryptorenta.app",
+    canonical: "https://jpradanos00.github.io/crypto-renta",
     languages: {
-      es: "https://cryptorenta.app",
-      en: "https://cryptorenta.app",
+      es: "https://jpradanos00.github.io/crypto-renta",
+      en: "https://jpradanos00.github.io/crypto-renta",
     },
   },
   robots: {
@@ -58,10 +60,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_ES",
     siteName: "CryptoRenta",
-    url: "https://cryptorenta.app",
+    url: "https://jpradanos00.github.io/crypto-renta",
     images: [
       {
-        url: "https://cryptorenta.app/og-image.png",
+        url: "https://jpradanos00.github.io/crypto-renta/og-image.png",
         width: 1200,
         height: 630,
         alt: "CryptoRenta - Calculadora de impuestos criptomonedas IRPF España",
@@ -74,7 +76,7 @@ export const metadata: Metadata = {
       "CryptoRenta - Calculadora IRPF Criptomonedas Gratis y Privada",
     description:
       "Calcula tus impuestos de criptomonedas para el IRPF español. 100% privado, sin servidor. Open source.",
-    images: ["https://cryptorenta.app/og-image.png"],
+    images: ["https://jpradanos00.github.io/crypto-renta/og-image.png"],
     creator: "@cryptorenta",
   },
   other: {

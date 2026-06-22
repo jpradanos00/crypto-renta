@@ -12,7 +12,7 @@ const PAGE_SCHEMAS = {
     {
       "@type": "SoftwareApplication",
       "name": "CryptoRenta",
-      "url": "https://cryptorenta.app",
+      "url": "https://jpradanos00.github.io/crypto-renta",
       "description": "Calculadora gratuita de impuestos de criptomonedas para el IRPF español. 100% privada, procesamiento local en el navegador, open source.",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Any",
@@ -76,7 +76,7 @@ const PAGE_SCHEMAS = {
           "@type": "ListItem",
           "position": 1,
           "name": "CryptoRenta",
-          "item": "https://cryptorenta.app",
+          "item": "https://jpradanos00.github.io/crypto-renta",
         },
       ],
     },
