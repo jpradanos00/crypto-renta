@@ -17,8 +17,8 @@ export function WarningPanel() {
   }
 
   return (
-    <details className="rounded-lg border border-warning/30 bg-warning/10 open:bg-warning/5">
-      <summary className="flex cursor-pointer items-center gap-3 p-4 text-sm font-medium text-warning focus:outline-none focus:ring-2 focus:ring-ring rounded-lg">
+    <details className="rounded-lg border border-warning/30 bg-warning/10 open:bg-warning/5 group">
+      <summary className="flex cursor-pointer items-center gap-3 p-4 text-sm font-medium text-warning focus:outline-none focus:ring-2 focus:ring-ring rounded-lg group-open:rounded-b-none group-open:border-b group-open:border-warning/20">
         <span aria-hidden="true">&#9888;&#65039;</span>
         <span>
           {t("warnings.header", {
@@ -27,7 +27,7 @@ export function WarningPanel() {
           })}
         </span>
       </summary>
-      <ul className="space-y-2 px-4 pb-4">
+      <ul className="space-y-2 p-4 pt-2">
         {warnings.map((w, i) => (
           <li
             key={`${w.transactionId}-${w.code}-${i}`}

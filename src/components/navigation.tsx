@@ -56,7 +56,7 @@ function LangToggle() {
       aria-label={locale === "es" ? "Switch to English" : "Cambiar a español"}
     >
       <Globe className="h-5 w-5" />
-      <span className="ml-1 text-xs font-bold">{locale === "es" ? "ES" : "EN"}</span>
+      <span className="text-[11px] font-bold leading-none">{locale === "es" ? "ES" : "EN"}</span>
     </button>
   );
 }
@@ -119,7 +119,7 @@ export function Navigation() {
         <ThemeToggle />
         <button
           onClick={() => setMobileOpen((v) => !v)}
-          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+      className="inline-flex items-center gap-1 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
           aria-label={mobileOpen ? t("common.close") : "Menu"}
           aria-expanded={mobileOpen}
         >

@@ -122,7 +122,7 @@ export default function GuiaPage() {
                       </div>
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground tabular-nums">
                             {step.number}
                           </span>
                           <h3 className="font-medium text-sm leading-tight">
